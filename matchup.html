@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Match-Up: Cara Mengidentifikasi Hoax</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #113F67;
+      color: #1c1c1c;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    canvas#stars {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(253, 245, 170, 0.03), transparent 50%);
+    }
+
+    /* === MODERN HEADER === */
+    header {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    header h1 {
+      font-size: 1.8em;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    .home-btn {
+      background: rgba(253, 245, 170, 0.2);
+      color: #ffffff;
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .home-btn:hover {
+      background: rgba(253, 245, 170, 0.3);
+      border-color: rgba(253, 245, 170, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* === FLOATING NAV BUTTONS === */
+    .nav-buttons {
+      position: fixed;
+      bottom: 390px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1000px;
+      z-index: 50;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 500;
+      padding: 14px 30px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn:hover {
+      background: rgba(253, 245, 170, 0.2);
+      border-color: rgba(253, 245, 170, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.2);
+    }
+
+    /* === CONTENT SECTION === */
+    .content {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px 100px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(253, 245, 170, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      padding: 10px 20px;
+      border-radius: 50px;
+      color: #FDF5AA;
+      font-size: 1.2em;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-size: 3em;
+      font-weight: 800;
+      line-height: 1.1;
+      color: #ffffff;
+      margin-bottom: 15px;
+      letter-spacing: -2px;
+    }
+
+    .section-header .gradient-text {
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 50%, #FDF5AA 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .section-header p {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* === GAME CONTAINER === */
+    .game-container {
+      background: rgba(40, 65, 109, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 30px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      max-width: 1200px;
+      width: 100%;
+      animation: fadeInScale 1s ease-out 0.3s both;
+    }
+
+    .game-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.08) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .game-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+    }
+
+    .score-icon {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+    }
+
+    .moves-icon {
+      background: rgba(33, 150, 243, 0.2);
+      color: #2196F3;
+    }
+
+    .time-icon {
+      background: rgba(255, 152, 0, 0.2);
+      color: #FF9800;
+    }
+
+    .stat-text {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #FDF5AA;
+    }
+
+    /* === MATCH-UP GAME === */
+    .match-up-game {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .columns-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .column {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 25px;
+      position: relative;
+    }
+
+    .column-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .column-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+    }
+
+    .column-a-icon {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+    }
+
+    .column-b-icon {
+      background: rgba(33, 150, 243, 0.2);
+      color: #2196F3;
+    }
+
+    .column-title {
+      color: #ffffff;
+      font-size: 1.3em;
+      font-weight: 600;
+    }
+
+    .match-items {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .match-item {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 15px;
+      color: #ffffff;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .match-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .match-item:hover::before {
+      left: 100%;
+    }
+
+    .match-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .match-item.selected {
+      background: rgba(253, 245, 170, 0.2);
+      border: 2px solid rgba(253, 245, 170, 0.5);
+    }
+
+    .match-item.matched {
+      background: rgba(76, 175, 80, 0.2);
+      border: 2px solid rgba(76, 175, 80, 0.5);
+      pointer-events: none;
+    }
+
+    .match-item.incorrect {
+      background: rgba(244, 67, 54, 0.2);
+      border: 2px solid rgba(244, 67, 54, 0.5);
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .item-label {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      margin-right: 10px;
+      font-weight: 600;
+    }
+
+    .connection-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      color: #113F67;
+      padding: 16px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 30px rgba(253, 245, 170, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.5);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* === RESULT MODAL === */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+      background: rgba(40, 65, 109, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      animation: scaleIn 0.3s ease-out;
+    }
+
+    @keyframes scaleIn {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: rgba(253, 245, 170, 0.2);
+      transform: rotate(90deg);
+    }
+
+    .result-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FDF5AA 0%, #f4e87c 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2em;
+      color: #113F67;
+    }
+
+    .result-title {
+      color: #ffffff;
+      font-size: 1.8em;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .result-score {
+      font-size: 3em;
+      font-weight: 800;
+      color: #FDF5AA;
+      margin-bottom: 20px;
+    }
+
+    .result-message {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.1em;
+      line-height: 1.7;
+      margin-bottom: 30px;
+    }
+
+    .result-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+
+    .result-stat {
+      text-align: center;
+    }
+
+    .result-stat-value {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #FDF5AA;
+    }
+
+    .result-stat-label {
+      font-size: 0.9em;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* === FOOTER === */
+    footer {
+      background: rgba(253, 245, 170, 0.95);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 30px;
+      color: #113F67;
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(17, 63, 103, 0.1);
+    }
+
+    footer p {
+      font-weight: 500;
+      font-size: 0.95em;
+    }
+
+    /* === FLOATING PARTICLES === */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.8), transparent);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+        transform: translateY(90vh) translateX(20px) scale(1);
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) translateX(100px) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 1024px) {
+      .columns-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        padding: 15px 25px;
+        gap: 15px;
+      }
+
+      header h1 {
+        font-size: 1.3em;
+      }
+
+      .content {
+        padding: 30px 20px 80px;
+      }
+
+      .section-header {
+        margin-bottom: 40px;
+      }
+
+      .section-header h2 {
+        font-size: 2em;
+      }
+
+      .section-header p {
+        font-size: 1em;
+      }
+
+      .game-container {
+        padding: 30px;
+      }
+
+      .nav-buttons {
+        bottom: 20px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        padding: 12px 24px;
+        font-size: 0.9em;
+      }
+
+      .match-item {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section-header h2 {
+        font-size: 1.8em;
+      }
+
+      .section-badge {
+        font-size: 0.8em;
+        padding: 8px 16px;
+      }
+
+      .game-container {
+        padding: 25px;
+      }
+
+      .column {
+        padding: 20px;
+      }
+
+      .match-item {
+        font-size: 0.8em;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="overlay"></div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <h1>Match-Up</h1>
+    <a href="index.html" class="home-btn">
+      <i class="fas fa-home"></i> Kembali ke Beranda
+    </a>
+  </header>
+
+  <div class="nav-buttons">
+    <a href="Game.html" class="nav-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+    <a href="index.html" class="nav-btn">
+      Next <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <section class="content">
+    <div class="section-header">
+      <div class="section-badge">
+        <i class="fas fa-link"></i>
+        <span>Game Interaktif</span>
+      </div>
+      
+      <h2 class="gradient-text">Cara Mengidentifikasi Hoax</h2>
+      <p>Cocokkan teknik mengidentifikasi hoax dengan contoh/tindakan yang tepat!</p>
+    </div>
+
+    <div class="game-container">
+      <div class="game-stats">
+        <div class="stat-item">
+          <div class="stat-icon score-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="stat-text">
+            Skor: <span class="stat-value" id="score">0</span>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon moves-icon">
+            <i class="fas fa-hand-pointer"></i>
+          </div>
+          <div class="stat-text">
+            Langkah: <span class="stat-value" id="moves">0</span>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon time-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-text">
+            Waktu: <span class="stat-value" id="timer">00:00</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="match-up-game">
+        <div class="columns-container">
+          <div class="column">
+            <div class="column-header">
+              <div class="column-icon column-a-icon">
+                <i class="fas fa-lightbulb"></i>
+              </div>
+              <h3 class="column-title">Kolom A — Teknik</h3>
+            </div>
+            <div class="match-items" id="column-a">
+              <!-- Column A items will be generated by JavaScript -->
+            </div>
+          </div>
+          
+          <div class="column">
+            <div class="column-header">
+              <div class="column-icon column-b-icon">
+                <i class="fas fa-tasks"></i>
+              </div>
+              <h3 class="column-title">Kolom B — Contoh / Tindakan</h3>
+            </div>
+            <div class="match-items" id="column-b">
+              <!-- Column B items will be generated by JavaScript -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="controls">
+        <button class="btn btn-secondary" onclick="resetGame()">
+          <i class="fas fa-redo"></i> Ulangi
+        </button>
+        <button class="btn" onclick="checkAnswers()">
+          <i class="fas fa-check"></i> Periksa Jawaban
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Result Modal -->
+  <div id="resultModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="result-icon">
+        <i class="fas fa-trophy"></i>
+      </div>
+      <h3 class="result-title">Game Selesai!</h3>
+      <div class="result-score" id="finalScore">0%</div>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="result-stat-value" id="correctCount">0</div>
+          <div class="result-stat-label">Benar</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-value" id="wrongCount">0</div>
+          <div class="result-stat-label">Salah</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-value" id="finalTime">00:00</div>
+          <div class="result-stat-label">Waktu</div>
+        </div>
+      </div>
+      <p class="result-message" id="resultMessage"></p>
+      <button class="btn" onclick="closeModal()">
+        Tutup <i class="fas fa-check"></i>
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Media Pembelajaran Informatika | Dibuat oleh Anggi Clementine (237111039)</p>
+  </footer>
+
+  <script>
+    // Game data
+    const gameData = {
+      columnA: [
+        { id: 'A1', text: 'Mengembangkan pemikiran kritis' },
+        { id: 'A2', text: 'Memeriksa sumber informasi' },
+        { id: 'A3', text: 'Melakukan check & recheck' },
+        { id: 'A4', text: 'Cek validitas gambar' },
+        { id: 'A5', text: 'Gunakan akal sehat' }
+      ],
+      columnB: [
+        { id: 'B1', text: 'Cari artikel lain di media kredibel dan bandingkan fakta.' },
+        { id: 'B2', text: 'Periksa URL dan ekstensi domain (.go.id, .ac.id lebih kredibel; domain aneh waspada).' },
+        { id: 'B3', text: 'Hindari reaksi emosional — tanyakan siapa yang diuntungkan dari berita ini.' },
+        { id: 'B4', text: 'Lakukan reverse image search untuk cari asal foto / manipulasi.' },
+        { id: 'B5', text: 'Jika klaim terdengar mustahil atau clickbait, jangan langsung percaya; pikirkan kemungkinan lain.' },
+        { id: 'B6', text: 'Langsung share kalau captionnya pendek dan lucu.' },
+        { id: 'B7', text: 'Cek hanya komentar di postingan untuk validasi.' },
+        { id: 'B8', text: 'Percaya komentar netizen tanpa cek sumber.' }
+      ],
+      correctMatches: {
+        'A1': 'B3',
+        'A2': 'B2',
+        'A3': 'B1',
+        'A4': 'B4',
+        'A5': 'B5'
+      }
+    };
+
+    // Game state
+    let score = 0;
+    let moves = 0;
+    let startTime;
+    let timerInterval;
+    let selectedA = null;
+    let selectedB = null;
+    let matches = {};
+    let gameCompleted = false;
+    let connections = [];
+
+    // Initialize game
+    function initGame() {
+      createColumns();
+      setupEventListeners();
+      startTimer();
+      createParticles();
+    }
+
+    // Create columns
+    function createColumns() {
+      const columnA = document.getElementById('column-a');
+      const columnB = document.getElementById('column-b');
+      
+      columnA.innerHTML = '';
+      columnB.innerHTML = '';
+      
+      // Create column A items
+      gameData.columnA.forEach(item => {
+        const element = document.createElement('div');
+        element.className = 'match-item';
+        element.dataset.id = item.id;
+        element.dataset.column = 'A';
+        element.innerHTML = `<span class="item-label">${item.id}</span> ${item.text}`;
+        columnA.appendChild(element);
+      });
+      
+      // Create column B items (shuffled)
+      const shuffledB = shuffleArray([...gameData.columnB]);
+      shuffledB.forEach(item => {
+        const element = document.createElement('div');
+        element.className = 'match-item';
+        element.dataset.id = item.id;
+        element.dataset.column = 'B';
+        element.innerHTML = `<span class="item-label">${item.id}</span> ${item.text}`;
+        columnB.appendChild(element);
+      });
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      const items = document.querySelectorAll('.match-item');
+      
+      items.forEach(item => {
+        item.addEventListener('click', () => selectItem(item));
+      });
+    }
+
+    // Select item
+    function selectItem(item) {
+      if (gameCompleted) return;
+      
+      const column = item.dataset.column;
+      const id = item.dataset.id;
+      
+      // Check if item is already matched
+      if (item.classList.contains('matched')) return;
+      
+      // Check if item is already connected to another item
+      const existingConnection = connections.find(conn => 
+        (conn.a === id && column === 'A') || (conn.b === id && column === 'B')
+      );
+      
+      if (existingConnection) {
+        // Remove existing connection
+        removeConnection(existingConnection);
+        return;
+      }
+      
+      if (column === 'A') {
+        // Deselect previous A item if any
+        if (selectedA) {
+          selectedA.classList.remove('selected');
+        }
+        
+        // Select new A item
+        selectedA = item;
+        item.classList.add('selected');
+        
+        // If B item is selected, make a match
+        if (selectedB) {
+          makeMatch();
+        }
+      } else {
+        // Deselect previous B item if any
+        if (selectedB) {
+          selectedB.classList.remove('selected');
+        }
+        
+        // Select new B item
+        selectedB = item;
+        item.classList.add('selected');
+        
+        // If A item is selected, make a match
+        if (selectedA) {
+          makeMatch();
+        }
+      }
+    }
+
+    // Make a match
+    function makeMatch() {
+      if (!selectedA || !selectedB) return;
+      
+      const aId = selectedA.dataset.id;
+      const bId = selectedB.dataset.id;
+      
+      // Store the match
+      matches[aId] = bId;
+      
+      // Add to connections
+      connections.push({ a: aId, b: bId });
+      
+      // Visual feedback for the match
+      selectedA.classList.add('matched');
+      selectedB.classList.add('matched');
+      
+      // Draw connection line
+      drawConnection(selectedA, selectedB);
+      
+      // Update moves
+      moves++;
+      updateMoves();
+      
+      // Deselect items
+      selectedA.classList.remove('selected');
+      selectedB.classList.remove('selected');
+      selectedA = null;
+      selectedB = null;
+      
+      // Check if all items are matched
+      if (Object.keys(matches).length === gameData.columnA.length) {
+        setTimeout(() => {
+          checkAnswers();
+        }, 500);
+      }
+    }
+
+    // Remove connection
+    function removeConnection(connection) {
+      const aId = connection.a;
+      const bId = connection.b;
+      
+      // Remove from matches
+      delete matches[aId];
+      
+      // Remove from connections
+      connections = connections.filter(conn => conn !== connection);
+      
+      // Remove visual feedback
+      const aItem = document.querySelector(`.match-item[data-id="${aId}"]`);
+      const bItem = document.querySelector(`.match-item[data-id="${bId}"]`);
+      
+      if (aItem) aItem.classList.remove('matched');
+      if (bItem) bItem.classList.remove('matched');
+      
+      // Remove connection line
+      removeConnectionLine(aId, bId);
+    }
+
+    // Draw connection line
+    function drawConnection(itemA, itemB) {
+      const gameContainer = document.querySelector('.match-up-game');
+      const connectionLines = document.createElement('div');
+      connectionLines.className = 'connection-lines';
+      
+      // Get positions
+      const rectA = itemA.getBoundingClientRect();
+      const rectB = itemB.getBoundingClientRect();
+      const containerRect = gameContainer.getBoundingClientRect();
+      
+      const x1 = rectA.right - containerRect.left;
+      const y1 = rectA.top + rectA.height / 2 - containerRect.top;
+      const x2 = rectB.left - containerRect.left;
+      const y2 = rectB.top + rectB.height / 2 - containerRect.top;
+      
+      // Create SVG line
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', gameContainer.offsetWidth);
+      svg.setAttribute('height', gameContainer.offsetHeight);
+      svg.style.position = 'absolute';
+      svg.style.top = '0';
+      svg.style.left = '0';
+      svg.style.pointerEvents = 'none';
+      svg.style.zIndex = '0';
+      
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', x1);
+      line.setAttribute('y1', y1);
+      line.setAttribute('x2', x2);
+      line.setAttribute('y2', y2);
+      line.setAttribute('stroke', 'rgba(253, 245, 170, 0.5)');
+      line.setAttribute('stroke-width', '2');
+      line.setAttribute('stroke-dasharray', '5, 5');
+      line.setAttribute('data-a', itemA.dataset.id);
+      line.setAttribute('data-b', itemB.dataset.id);
+      
+      svg.appendChild(line);
+      gameContainer.appendChild(svg);
+    }
+
+    // Remove connection line
+    function removeConnectionLine(aId, bId) {
+      const gameContainer = document.querySelector('.match-up-game');
+      const lines = gameContainer.querySelectorAll('line');
+      
+      lines.forEach(line => {
+        if (line.getAttribute('data-a') === aId && line.getAttribute('data-b') === bId) {
+          line.parentElement.remove();
+        }
+      });
+    }
+
+    // Check answers
+    function checkAnswers() {
+      if (gameCompleted) return;
+      
+      let correct = 0;
+      let wrong = 0;
+      
+      // Check each match
+      for (const aId in matches) {
+        const bId = matches[aId];
+        const aItem = document.querySelector(`.match-item[data-id="${aId}"]`);
+        const bItem = document.querySelector(`.match-item[data-id="${bId}"]`);
+        
+        if (gameData.correctMatches[aId] === bId) {
+          // Correct match
+          correct++;
+          aItem.classList.remove('incorrect');
+          aItem.classList.add('matched');
+          bItem.classList.remove('incorrect');
+          bItem.classList.add('matched');
+          
+          // Update line color to green
+          const gameContainer = document.querySelector('.match-up-game');
+          const lines = gameContainer.querySelectorAll('line');
+          lines.forEach(line => {
+            if (line.getAttribute('data-a') === aId && line.getAttribute('data-b') === bId) {
+              line.setAttribute('stroke', 'rgba(76, 175, 80, 0.7)');
+              line.setAttribute('stroke-width', '3');
+            }
+          });
+        } else {
+          // Wrong match
+          wrong++;
+          aItem.classList.remove('matched');
+          aItem.classList.add('incorrect');
+          bItem.classList.remove('matched');
+          bItem.classList.add('incorrect');
+          
+          // Update line color to red
+          const gameContainer = document.querySelector('.match-up-game');
+          const lines = gameContainer.querySelectorAll('line');
+          lines.forEach(line => {
+            if (line.getAttribute('data-a') === aId && line.getAttribute('data-b') === bId) {
+              line.setAttribute('stroke', 'rgba(244, 67, 54, 0.7)');
+              line.setAttribute('stroke-width', '3');
+            }
+          });
+        }
+      }
+      
+      // Calculate score
+      const totalItems = gameData.columnA.length;
+      score = Math.round((correct / totalItems) * 100);
+      updateScore();
+      
+      // Show results
+      showResults(correct, wrong);
+      gameCompleted = true;
+    }
+
+    // Show results modal
+    function showResults(correct, wrong) {
+      clearInterval(timerInterval);
+      
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const minutes = Math.floor(elapsed / 60);
+      const seconds = elapsed % 60;
+      
+      document.getElementById('finalScore').textContent = `${score}%`;
+      document.getElementById('correctCount').textContent = correct;
+      document.getElementById('wrongCount').textContent = wrong;
+      document.getElementById('finalTime').textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      let message = '';
+      if (score >= 90) {
+        message = 'Sempurna! Kamu memahami cara mengidentifikasi hoax dengan sangat baik!';
+      } else if (score >= 70) {
+        message = 'Bagus! Kamu sudah memahami sebagian besar cara mengidentifikasi hoax.';
+      } else if (score >= 50) {
+        message = 'Cukup baik! Terus belajar untuk lebih memahami cara mengidentifikasi hoax.';
+      } else {
+        message = 'Terus berlatih! Penting untuk memahami cara mengidentifikasi hoax secara benar.';
+      }
+      
+      document.getElementById('resultMessage').textContent = message;
+      document.getElementById('resultModal').classList.add('active');
+    }
+
+    // Update score
+    function updateScore() {
+      document.getElementById('score').textContent = score;
+    }
+
+    // Update moves
+    function updateMoves() {
+      document.getElementById('moves').textContent = moves;
+    }
+
+    // Start timer
+    function startTimer() {
+      startTime = Date.now();
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = Math.floor(elapsed / 60);
+        const seconds = elapsed % 60;
+        document.getElementById('timer').textContent = 
+          `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    // Reset game
+    function resetGame() {
+      // Reset game state
+      score = 0;
+      moves = 0;
+      matches = {};
+      connections = [];
+      selectedA = null;
+      selectedB = null;
+      gameCompleted = false;
+      
+      // Reset UI
+      updateScore();
+      updateMoves();
+      
+      // Remove all connection lines
+      const gameContainer = document.querySelector('.match-up-game');
+      const svgs = gameContainer.querySelectorAll('svg');
+      svgs.forEach(svg => svg.remove());
+      
+      // Reset timer
+      clearInterval(timerInterval);
+      startTimer();
+      
+      // Reinitialize game
+      createColumns();
+      setupEventListeners();
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById('resultModal').classList.remove('active');
+    }
+
+    // Shuffle array
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    }
+
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 15;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 6 + 3;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 15}s`;
+        particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Enhanced starfield animation
+    (function () {
+      const canvas = document.getElementById('stars');
+      const ctx = canvas.getContext('2d');
+
+      const STAR_COUNT = Math.floor((window.innerWidth * window.innerHeight) / 2000);
+      const MAX_RADIUS = 2;
+      const MIN_RADIUS = 0.4;
+      const TWINKLE_SPEED = 0.02;
+      const SHOOTING_STAR_CHANCE = 0.001;
+      const SHOOTING_STAR_SPEED = 15;
+
+      let stars = [];
+      let shootingStars = [];
+      let w = 0, h = 0, t = 0;
+
+      function rand(min, max) { return Math.random() * (max - min) + min; }
+
+      function makeStar() {
+        return {
+          x: Math.random(),
+          y: Math.random(),
+          r: rand(MIN_RADIUS, MAX_RADIUS),
+          baseAlpha: rand(0.4, 1.0),
+          twinklePhase: Math.random() * Math.PI * 2,
+          twinkleSpeed: rand(TWINKLE_SPEED * 0.5, TWINKLE_SPEED * 1.5)
+        };
+      }
+
+      function makeShootingStar() {
+        const angle = rand(0, Math.PI * 0.5);
+        return {
+          x: rand(0, 0.5),
+          y: rand(0, 0.5),
+          vx: Math.cos(angle) * SHOOTING_STAR_SPEED * 0.001,
+          vy: Math.sin(angle) * SHOOTING_STAR_SPEED * 0.001,
+          length: rand(0.05, 0.15),
+          alpha: 1.0
+        };
+      }
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+
+      function init() {
+        resize();
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          stars.push(makeStar());
+        }
+      }
+
+      function animate() {
+        t += 0.01;
+        ctx.fillStyle = 'rgba(17, 63, 103, 0.1)';
+        ctx.fillRect(0, 0, w, h);
+
+        stars.forEach(star => {
+          const twinkle = Math.sin(star.twinklePhase + t * star.twinkleSpeed) * 0.5 + 0.5;
+          const alpha = star.baseAlpha * twinkle;
+          
+          ctx.beginPath();
+          ctx.arc(star.x * w, star.y * h, star.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+        });
+
+        if (Math.random() < SHOOTING_STAR_CHANCE) {
+          shootingStars.push(makeShootingStar());
+        }
+
+        shootingStars = shootingStars.filter(star => {
+          star.x += star.vx;
+          star.y += star.vy;
+          star.alpha -= 0.01;
+
+          if (star.alpha <= 0) return false;
+
+          const gradient = ctx.createLinearGradient(
+            star.x * w, star.y * h,
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${star.alpha})`);
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(star.x * w, star.y * h);
+          ctx.lineTo(
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          ctx.stroke();
+
+          return true;
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', init);
+      init();
+      animate();
+    })();
+
+    // Initialize game when page loads
+    window.onload = initGame;
+  </script>
+</body>
+</html>

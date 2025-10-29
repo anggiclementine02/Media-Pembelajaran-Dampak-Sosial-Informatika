@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Berpikir Bijak - Dampak Sosial Informatika</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #113F67;
+      color: #1c1c1c;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    canvas#stars {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(253, 245, 170, 0.03), transparent 50%);
+    }
+
+    /* === MODERN HEADER === */
+    header {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    header h1 {
+      font-size: 1.8em;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    .home-btn {
+      background: rgba(253, 245, 170, 0.2);
+      color: #ffffff;
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .home-btn:hover {
+      background: rgba(253, 245, 170, 0.3);
+      border-color: rgba(253, 245, 170, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* === FLOATING NAV BUTTONS === */
+    .nav-buttons {
+      position: fixed;
+      bottom: 390px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1000px;
+      z-index: 50;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 500;
+      padding: 14px 30px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn:hover {
+      background: rgba(253, 245, 170, 0.2);
+      border-color: rgba(253, 245, 170, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.2);
+    }
+
+    /* === CONTENT SECTION === */
+    .content {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px 100px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(253, 245, 170, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      padding: 10px 20px;
+      border-radius: 50px;
+      color: #FDF5AA;
+      font-size: 1.2em;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-size: 3em;
+      font-weight: 800;
+      line-height: 1.1;
+      color: #ffffff;
+      margin-bottom: 15px;
+      letter-spacing: -2px;
+    }
+
+    .section-header .gradient-text {
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 50%, #FDF5AA 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .section-header p {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* === GAME CONTAINER === */
+    .game-container {
+      background: rgba(40, 65, 109, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 30px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      max-width: 900px;
+      width: 100%;
+      animation: fadeInScale 1s ease-out 0.3s both;
+    }
+
+    .game-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.08) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .progress-container {
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, #FDF5AA, #f5e878);
+      transition: width 0.5s ease;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .progress::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    .score-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .score-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .score-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+    }
+
+    .correct-icon {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+    }
+
+    .wrong-icon {
+      background: rgba(244, 67, 54, 0.2);
+      color: #F44336;
+    }
+
+    .score-text {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .score-value {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #FDF5AA;
+    }
+
+    .case-title {
+      background: linear-gradient(135deg, rgba(253, 245, 170, 0.2), rgba(253, 245, 170, 0.1));
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      color: #FDF5AA;
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      font-size: 1.3em;
+      font-weight: 600;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .story-box {
+      background: #ffff;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 30px;
+      border-left: 5px solid #FDF5AA;
+      position: relative;
+      z-index: 1;
+    }
+
+    .story-box h3 {
+      color: #113F67;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .story-box p {
+      color: #333;
+      line-height: 1.8;
+      font-size: 1.1em;
+    }
+
+    .question {
+      color: #ffffff;
+      font-size: 1.2em;
+      font-weight: 600;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .choice-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 15px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.3s;
+      font-size: 1.1em;
+      color: rgba(255, 255, 255, 0.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .choice-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(253, 245, 170, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .choice-btn:hover::before {
+      left: 100%;
+    }
+
+    .choice-btn:hover {
+      border-color: rgba(253, 245, 170, 0.5);
+      background: rgba(253, 245, 170, 0.1);
+      transform: translateX(5px);
+    }
+
+    .choice-btn.correct {
+      border-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.1);
+      animation: correctAnim 0.5s;
+    }
+
+    .choice-btn.wrong {
+      border-color: #F44336;
+      background: rgba(244, 67, 54, 0.1);
+      animation: wrongAnim 0.5s;
+    }
+
+    .choice-btn.disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    @keyframes correctAnim {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes wrongAnim {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .feedback {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      display: none;
+      animation: fadeIn 0.5s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      background: rgba(76, 175, 80, 0.1);
+      border-left: 5px solid #4CAF50;
+    }
+
+    .feedback.wrong {
+      background: rgba(244, 67, 54, 0.1);
+      border-left: 5px solid #F44336;
+    }
+
+    .feedback h4 {
+      margin-bottom: 10px;
+      font-size: 1.2em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .feedback p {
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.1em;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .next-btn {
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      color: #113F67;
+      padding: 16px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 30px rgba(253, 245, 170, 0.3);
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .next-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.5);
+    }
+
+    .next-btn.show {
+      display: inline-flex;
+    }
+
+    .next-btn.hide {
+      display: none;
+    }
+
+    /* === START SCREEN === */
+    .start-screen {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .start-screen h2 {
+      color: #FDF5AA;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    .start-screen p {
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.2em;
+    }
+
+    .start-btn {
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      color: #113F67;
+      padding: 16px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.2em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 30px rgba(253, 245, 170, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.5);
+    }
+
+    /* === RESULT SCREEN === */
+    .result-screen {
+      text-align: center;
+      display: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .result-screen.show {
+      display: block;
+    }
+
+    .result-title {
+      font-size: 2.5em;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .result-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #113F67, #FDF5AA);
+      border-radius: 3px;
+    }
+
+    .result-score {
+      font-size: 3.5em;
+      font-weight: 700;
+      color: #FDF5AA;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .result-message {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 30px;
+      max-width: 80%;
+      line-height: 1.8;
+    }
+
+    .restart-btn {
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      color: #113F67;
+      padding: 16px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 30px rgba(253, 245, 170, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+
+    .restart-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.5);
+    }
+
+    .emoji {
+      font-size: 80px;
+      margin: 20px 0;
+    }
+
+    /* === FOOTER === */
+    footer {
+      background: rgba(253, 245, 170, 0.95);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 30px;
+      color: #113F67;
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(17, 63, 103, 0.1);
+    }
+
+    footer p {
+      font-weight: 500;
+      font-size: 0.95em;
+    }
+
+    /* === FLOATING PARTICLES === */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.8), transparent);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+        transform: translateY(90vh) translateX(20px) scale(1);
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) translateX(100px) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 1024px) {
+      .section-header h2 {
+        font-size: 2.5em;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        padding: 15px 25px;
+        gap: 15px;
+      }
+
+      header h1 {
+        font-size: 1.3em;
+      }
+
+      .content {
+        padding: 30px 20px 80px;
+      }
+
+      .section-header {
+        margin-bottom: 40px;
+      }
+
+      .section-header h2 {
+        font-size: 2em;
+      }
+
+      .section-header p {
+        font-size: 1em;
+      }
+
+      .game-container {
+        padding: 30px;
+      }
+
+      .story-box p {
+        font-size: 1em;
+      }
+
+      .choice-btn {
+        font-size: 1em;
+      }
+
+      .nav-buttons {
+        bottom: 20px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        padding: 12px 24px;
+        font-size: 0.9em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section-header h2 {
+        font-size: 1.8em;
+      }
+
+      .section-badge {
+        font-size: 0.8em;
+        padding: 8px 16px;
+      }
+
+      .game-container {
+        padding: 25px;
+      }
+
+      .case-title {
+        font-size: 1.1em;
+      }
+
+      .story-box p {
+        font-size: 0.9em;
+      }
+
+      .choice-btn {
+        font-size: 0.9em;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="overlay"></div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <h1>Smart Online Decisions</h1>
+    <a href="index.html" class="home-btn">
+      <i class="fas fa-home"></i> Kembali ke Beranda
+    </a>
+  </header>
+
+  <div class="nav-buttons">
+    <a href="Game.html" class="nav-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+    <a href="index.html" class="nav-btn">
+      Next <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <section class="content">
+    <div class="section-header">
+      <div class="section-badge">
+        <i class="fas fa-gamepad"></i>
+        <span>Game Interaktif</span>
+      </div>
+      
+      <h2 class="gradient-text">Berpikir Bijak dalam Dunia Digital</h2>
+      <p>Uji kemampuanmu dalam mengambil keputusan bijak saat menghadapi masalah di dunia digital. Pilihlah jawaban yang paling tepat!</p>
+    </div>
+
+    <div class="game-container">
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress" id="progressBar"></div>
+        </div>
+      </div>
+      
+      <div class="score-container">
+        <div class="score-item">
+          <div class="score-icon correct-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <div class="score-text">
+            Benar: <span class="score-value" id="correctScore">0</span>
+          </div>
+        </div>
+        
+        <div class="score-item">
+          <div class="score-icon wrong-icon">
+            <i class="fas fa-times"></i>
+          </div>
+          <div class="score-text">
+            Salah: <span class="score-value" id="wrongScore">0</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Start Screen -->
+      <div class="start-screen" id="startScreen">
+        <h2>🎮 Selamat Datang!</h2>
+        <p>
+          Dalam game ini, kamu akan menghadapi 15 situasi yang sering terjadi di dunia digital.
+          Setiap pilihan yang kamu buat akan memiliki konsekuensi!
+        </p>
+        <p>
+          <strong>Tujuan:</strong> Belajar mengambil keputusan bijak saat menghadapi masalah cyberbullying, hoax, dan privasi di media sosial.
+        </p>
+        <p style="color: #FDF5AA; font-weight: bold;">
+          💡 Ingat: Apa yang kita lakukan di dunia digital punya dampak nyata!
+        </p>
+        <button class="start-btn" onclick="startGame()">
+          <i class="fas fa-play"></i> Mulai Game
+        </button>
+      </div>
+      
+      <!-- Case Screen -->
+      <div class="case-screen" id="caseScreen" style="display: none;">
+        <div class="case-title" id="caseTitle"></div>
+        
+        <div class="story-box">
+          <h3><i class="fas fa-book-open"></i> Cerita:</h3>
+          <p id="storyText"></p>
+        </div>
+
+        <div class="question" id="questionText"></div>
+
+        <div class="choices" id="choicesContainer"></div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <button class="next-btn hide" id="nextBtn" onclick="nextCase()">
+          <i class="fas fa-arrow-right"></i> Lanjut ke Kasus Berikutnya
+        </button>
+      </div>
+      
+      <!-- Result Screen -->
+      <div class="result-screen" id="resultScreen">
+        <div class="emoji" id="resultEmoji"></div>
+        <h2 class="result-title">Game Selesai!</h2>
+        <div class="result-score" id="finalScore"></div>
+        <div class="result-message" id="resultMessage"></div>
+        <button class="restart-btn" onclick="restartGame()">
+          <i class="fas fa-redo"></i> Main Lagi
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Media Pembelajaran Informatika | Dibuat oleh Anggi Clementine (237111039)</p>
+  </footer>
+
+  <!-- Audio elements for sound effects -->
+  <audio id="correctSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+  </audio>
+  <audio id="wrongSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+  </audio>
+
+  <script>
+    const cases = [
+      {
+        title: "📸 Kasus 1: Cyberbullying Foto",
+        story: "Nadia memposting foto ulang tahunnya di media sosial. Beberapa teman-temannya mengedit fotonya secara buruk dan menyebarkannya di grup kelas & media sosial lain sambil mengejek.",
+        question: "Apa yang harus dilakukan Nadia?",
+        choices: [
+          {
+            text: "A. Membalas hinaan dengan komentar jelek juga",
+            correct: false,
+            feedback: "❌ Konsekuensi: Masalah makin besar dan Nadia bisa dianggap ikut melakukan bullying. Membalas dengan cara yang sama tidak menyelesaikan masalah!"
+          },
+          {
+            text: "B. Menghapus akun media sosial dan diam saja",
+            correct: false,
+            feedback: "❌ Konsekuensi: Pelaku tetap bebas dan tidak ada penyelesaian. Menghindari masalah bukan solusi yang tepat."
+          },
+          {
+            text: "C. Mengumpulkan bukti lalu melapor ke guru/orang tua",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Dengan mengumpulkan bukti dan melapor ke pihak yang berwenang, tindakan serius bisa diambil dan masalah dapat dihentikan. Ini adalah cara yang bijak dan dewasa!"
+          },
+          {
+            text: "D. Menyebarkan foto buruk teman-temannya sebagai balasan",
+            correct: false,
+            feedback: "❌ Konsekuensi: Nadia jadi sama saja dengan pelaku bullying. Balas dendam tidak menyelesaikan masalah dan malah membuat situasi lebih buruk."
+          }
+        ]
+      },
+      {
+        title: "📰 Kasus 2: Hoax & Penyebaran Berita Bohong",
+        story: "Rafi menemukan berita di grup WhatsApp bahwa sekolah akan diliburkan selama seminggu karena 'serangan hacker'. Berita ini terlihat serius dan membuat khawatir.",
+        question: "Apa yang harus dilakukan Rafi sebelum menyebarkan?",
+        choices: [
+          {
+            text: "A. Langsung share biar semua tahu",
+            correct: false,
+            feedback: "❌ Konsekuensi: Sumber tidak jelas dan Rafi ikut menyebar hoax! Menyebarkan informasi tanpa verifikasi bisa membuat kepanikan dan mengganggu orang lain."
+          },
+          {
+            text: "B. Cek kebenaran melalui guru atau website resmi sekolah",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Selalu verifikasi informasi dari sumber resmi sebelum menyebar. Ini adalah sikap bertanggung jawab di era digital!"
+          },
+          {
+            text: "C. Tambahkan caption dramatis biar makin rame",
+            correct: false,
+            feedback: "❌ Konsekuensi: Memperparah hoax dan membuat kepanikan yang tidak perlu. Menambahkan drama pada berita yang belum terverifikasi sangat berbahaya!"
+          },
+          {
+            text: "D. Tanya ke teman sebangku",
+            correct: false,
+            feedback: "❌ Konsekuensi: Teman juga belum tentu tahu kebenarannya. Harus cek ke sumber yang valid dan bertanggung jawab!"
+          }
+        ]
+      },
+      {
+        title: "🔒 Kasus 3: Privasi & Keamanan Akun",
+        story: "Maya sering membagikan lokasi real-time di Instagram Story setiap kali dia pergi ke suatu tempat. Dia ingin followers tahu aktivitasnya.",
+        question: "Apa keputusan terbaik untuk Maya?",
+        choices: [
+          {
+            text: "A. Tetap share, biar followers tahu dia eksis",
+            correct: false,
+            feedback: "❌ Konsekuensi: Risiko stalking, pencurian data, dan kejahatan lainnya meningkat! Membagikan lokasi real-time sangat berbahaya."
+          },
+          {
+            text: "B. Hanya share lokasi ke teman dekat (Close Friends)",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Membatasi informasi lokasi hanya untuk orang yang dipercaya adalah langkah keamanan yang baik."
+          },
+          {
+            text: "C. Share lokasi setelah dia meninggalkan tempatnya",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Ini cara aman untuk tetap berbagi pengalaman tanpa membahayakan diri. Kamu tetap bisa eksis dengan aman!"
+          },
+          {
+            text: "D. Post foto tanpa tag lokasi",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Menikmati momen dan berbagi foto tanpa membocorkan lokasi adalah pilihan yang bijak dan aman!"
+          }
+        ]
+      },
+      {
+        title: "💬 Kasus 4: Komentar Kasar di Media Sosial",
+        story: "Aldi melihat ada komentar kasar dan menyakitkan ditujukan kepada temannya di kolom komentar YouTube. Temannya mulai terlihat murung dan sedih.",
+        question: "Apa reaksi terbaik yang bisa dilakukan Aldi?",
+        choices: [
+          {
+            text: "A. Ikut mengomentari kasar untuk membela teman",
+            correct: false,
+            feedback: "❌ Konsekuensi: Sikap ini tetap toxic dan memperburuk suasana. Kekerasan tidak bisa dilawan dengan kekerasan!"
+          },
+          {
+            text: "B. Mendukung teman secara pribadi dan melapor komentar",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Memberikan dukungan emosional dan mengambil tindakan dengan melaporkan komentar adalah sikap yang peduli dan sigap!"
+          },
+          {
+            text: "C. Diam saja karena bukan urusannya",
+            correct: false,
+            feedback: "❌ Konsekuensi: Sikap pasif sama dengan membiarkan bullying terjadi. Sebagai teman yang baik, kita harus peduli!"
+          },
+          {
+            text: "D. Screenshot dan sebarkan komentar itu ke grup lain",
+            correct: false,
+            feedback: "❌ Konsekuensi: Malah memperluas penyebaran konten negatif dan membuat korban semakin malu. Ini bukan cara membantu!"
+          }
+        ]
+      },
+      {
+        title: "📱 Kasus 5: Akun Palsu & Identitas",
+        story: "Budi menemukan ada akun dengan namanya dan fotonya yang mengirim pesan aneh ke teman-temannya meminta uang. Teman-temannya mulai curiga padanya.",
+        question: "Apa yang harus Budi lakukan?",
+        choices: [
+          {
+            text: "A. Membuat akun baru dengan nama yang berbeda",
+            correct: false,
+            feedback: "❌ Konsekuensi: Masalah tidak terselesaikan dan orang lain mungkin masih tertipu. Menghindar bukan solusi yang tepat."
+          },
+          {
+            text: "B. Melaporkan akun palsu dan memberi tahu teman-teman",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Melaporkan akun palsu dan menginformasikan teman-teman adalah langkah yang tepat untuk mencegah penipuan lebih lanjut."
+          },
+          {
+            text: "C. Mengabaikan karena tidak ada yang rugi",
+            correct: false,
+            feedback: "❌ Konsekuensi: Nama baik Budi bisa tercemar dan teman-temannya bisa jadi korban penipuan. Ini adalah masalah serius!"
+          },
+          {
+            text: "D. Memposting status marah-marah di media sosial",
+            correct: false,
+            feedback: "❌ Konsekuensi: Status marah-marah tidak menyelesaikan masalah dan bisa membuat situasi lebih buruk. Tetap tenang dan ambil tindakan yang tepat!"
+          }
+        ]
+      },
+      {
+        title: "🎮 Kasus 6: Game Online & Interaksi Berbahaya",
+        story: "Rina sering bermain game online dan bertemu dengan orang asing yang menawarkan item gratis jika Rina bersedia video call dengan mereka.",
+        question: "Apa yang harus Rina lakukan?",
+        choices: [
+          {
+            text: "A. Menerima tawaran karena butuh item gratis",
+            correct: false,
+            feedback: "❌ Konsekuensi: Risiko eksploitasi, pelecehan, atau pencurian data pribadi. Tawaran yang terlalu bagus seringkali jebakan berbahaya!"
+          },
+          {
+            text: "B. Menolak dengan sopan dan memblokir orang tersebut",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Menolak tawaran mencurigakan dan memblokir kontak adalah langkah keamanan yang bijak."
+          },
+          {
+            text: "C. Memberitahu orang tua dan melaporkan di game",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Memberi tahu orang dewasa dan melaporkan perilaku mencurigakan adalah tindakan yang bertanggung jawab!"
+          },
+          {
+            text: "D. Mengajak teman untuk video call bersama",
+            correct: false,
+            feedback: "❌ Konsekuensi: Membahayakan diri sendiri dan teman-teman. Jangan pernah ajak orang lain ikut dalam situasi berbahaya!"
+          }
+        ]
+      },
+      {
+        title: "📧 Kasus 7: Email & Phishing",
+        story: "Andi menerima email yang mengaku dari bank, meminta untuk mengklik link dan memasukkan data rekening untuk verifikasi akun. Email tersebut terlihat sangat resmi.",
+        question: "Apa yang harus Andi lakukan?",
+        choices: [
+          {
+            text: "A. Langsung klik link dan verifikasi data",
+            correct: false,
+            feedback: "❌ Konsekuensi: Data pribadi dan rekening bisa dicuri! Email mencurigakan seperti ini adalah teknik phishing yang umum."
+          },
+          {
+            text: "B. Mengecek alamat email pengirim dan menghubungi bank langsung",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Memverifikasi identitas pengirim dan menghubungi bank melalui saluran resmi adalah cara aman untuk mengonfirmasi kebenaran email."
+          },
+          {
+            text: "C. Meneruskan email ke teman-teman agar waspada",
+            correct: false,
+            feedback: "❌ Konsekuensi: Malah membantu penyebaran phishing. Sebaiknya laporkan email tersebut ke bank atau layanan keamanan siber."
+          },
+          {
+            text: "D. Mengabaikan email tersebut",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Mengabaikan email mencurigakan lebih baik daripada mengambil risiko. Namun melaporkannya bisa membantu orang lain."
+          }
+        ]
+      },
+      {
+        title: "👥 Kasus 8: Grup Chat & Peer Pressure",
+        story: "Di grup WhatsApp kelas, seseorang mengusulkan untuk membuat meme ejekan tentang guru yang memberikan nilai rendah. Banyak yang setuju dan ikut tertawa.",
+        question: "Apa yang harus kamu lakukan?",
+        choices: [
+          {
+            text: "A. Ikut membuat meme agar tidak dikucilkan",
+            correct: false,
+            feedback: "❌ Konsekuensi: Ikut serta dalam bullying terhadap guru dan merusak citra diri sendiri. Popularitas tidak seharga integritas!"
+          },
+          {
+            text: "B. Diam saja agar tidak ikut-ikutan",
+            correct: false,
+            feedback: "❌ Konsekuensi: Diam sama dengan membiarkan. Sebagai siswa yang baik, kita harus melawan bullying, termasuk terhadap guru."
+          },
+          {
+            text: "C. Menyarankan untuk tidak membuat meme dan menjelaskan dampaknya",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Memberikan pendapat yang bijak dan menjelaskan dampak negatif adalah tindakan yang berani dan bertanggung jawab."
+          },
+          {
+            text: "D. Keluar dari grup WhatsApp",
+            correct: false,
+            feedback: "❌ Konsekuensi: Masalah tidak terselesaikan dan kamu mungkin kehilangan informasi penting. Lebih baik mencoba mengubah situasi dari dalam."
+          }
+        ]
+      },
+      {
+        title: "📷 Kasus 9: Foto Pribadi & Persetujuan",
+        story: "Salsa menghadiri pesta dan banyak teman yang mengambil fotonya. Beberapa hari kemudian, Salsa menemukan fotonya sudah beredar di media sosial tanpa izinnya.",
+        question: "Apa yang harus Salsa lakukan?",
+        choices: [
+          {
+            text: "A. Meminta foto tersebut dihapus dengan sopan",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Meminta penghapusan foto dengan cara yang sopan adalah hakmu dan langkah pertama yang tepat."
+          },
+          {
+            text: "B. Melaporkan postingan tersebut ke platform media sosial",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Melaporkan konten yang melanggar privasi adalah hakmu dan bisa membantu mencegah hal serupa terjadi lagi."
+          },
+          {
+            text: "C. Mengirim komentar marah-marah di postingan tersebut",
+            correct: false,
+            feedback: "❌ Konsekuensi: Konflik bisa memburuk dan citra dirimu terpengaruh negatif. Selesaikan masalah dengan kepala dingin."
+          },
+          {
+            text: "D. Membiarkan saja karena toh sudah tersebar",
+            correct: false,
+            feedback: "❌ Konsekuensi: Privasimu terus dilanggar dan bisa memberikan contoh buruk bahwa ini diperbolehkan. Tetap berjuang untuk hakmu!"
+          }
+        ]
+      },
+      {
+        title: "🔍 Kasus 10: Riset Online & Sumber Informasi",
+        story: "Untuk tugas sekolah, Fajar menemukan sebuah situs web dengan informasi yang sangat mendukung argumennya. Namun, situs tersebut tidak memiliki nama penulis dan tanggal publikasi yang jelas.",
+        question: "Apa yang harus Fajar lakukan?",
+        choices: [
+          {
+            text: "A. Menggunakan sumber tersebut karena mendukung argumen",
+            correct: false,
+            feedback: "❌ Konsekuensi: Tugas bisa dianggap tidak kredibel dan Fajar bisa dituduh plagiat atau menggunakan sumber tidak valid."
+          },
+          {
+            text: "B. Mencari sumber lain yang lebih kredibel untuk mendukung argumen",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Selalu prioritaskan sumber yang kredibel dengan penulis dan tanggal yang jelas untuk akademisi yang bertanggung jawab."
+          },
+          {
+            text: "C. Mengutip sumber tersebut tanpa menyebutkan asalnya",
+            correct: false,
+            feedback: "❌ Konsekuensi: Ini adalah plagiarisme! Selalu berikan kredit pada sumber asli, bahkan jika sumbernya tidak sempurna."
+          },
+          {
+            text: "D. Mengubah sedikit informasi agar terlihat orisinal",
+            correct: false,
+            feedback: "❌ Konsekuensi: Ini masih plagiarisme dan tidak etis. Integritas akademis sangat penting untuk pembelajaran yang bermakna."
+          }
+        ]
+      },
+      {
+        title: "💳 Kasus 11: Belanja Online & Keamanan Data",
+        story: "Lia menemukan toko online dengan harga smartphone sangat murah. Saat checkout, situs tersebut meminta banyak data pribadi termasuk password akun media sosial.",
+        question: "Apa yang harus Lia lakukan?",
+        choices: [
+          {
+            text: "A. Lanjutkan pembelian karena harganya sangat murah",
+            correct: false,
+            feedback: "❌ Konsekuensi: Data pribadi bisa dicuri dan uang hilang! Situs yang meminta password media sosial adalah tanda penipuan."
+          },
+          {
+            text: "B. Membatalkan pembelian dan mencari toko resmi",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Keamanan data lebih penting dari harga murah. Selalu belanja di toko yang terpercaya dan resmi."
+          },
+          {
+            text: "C. Mengisi data palsu untuk berjaga-jaga",
+            correct: false,
+            feedback: "❌ Konsekuensi: Ini tetap berisiko dan bisa melanggar ketentuan. Lebih baik menghindari situs mencurigakan sama sekali."
+          },
+          {
+            text: "D. Menanyakan ke teman apakah pernah belanja di situ",
+            correct: false,
+            feedback: "❌ Konsekuensi: Pengalaman teman tidak menjamin keamanan. Situs yang meminta password jelas-jelas berbahaya dan harus dihindari."
+          }
+        ]
+      },
+      {
+        title: "🎭 Kasus 12: Akun Media Sosial & Identitas Palsu",
+        story: "Dika membuat akun media sosial dengan nama samaran dan foto artis untuk mendapatkan lebih banyak followers. Ia menggunakan akun ini untuk berinteraksi dengan orang lain.",
+        question: "Apa dampak dari tindakan Dika?",
+        choices: [
+          {
+            text: "A. Tidak ada masalah karena banyak orang juga melakukannya",
+            correct: false,
+            feedback: "❌ Konsekuensi: Ini adalah penipuan identitas yang bisa melanggar hukum dan merugikan orang lain serta artis yang fotonya digunakan."
+          },
+          {
+            text: "B. Bisa membangun jaringan pertemanan yang luas",
+            correct: false,
+            feedback: "❌ Konsekuensi: Pertemanan yang dibangun atas dasar kebohongan tidak akan bertahan lama dan bisa mengecewakan banyak orang."
+          },
+          {
+            text: "C. Melanggar hak cipta dan bisa dilaporkan",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Menggunakan foto orang lain tanpa izin melanggar hak cipta dan privasi. Ini bisa berakibat hukum."
+          },
+          {
+            text: "D. Meningkatkan kepercayaan diri",
+            correct: false,
+            feedback: "❌ Konsekuensi: Kepercayaan diri yang dibangun atas kebohongan tidak akan bertahan lama. Lebih baik menjadi diri sendiri."
+          }
+        ]
+      },
+      {
+        title: "🌐 Kasus 13: Filter & Edit Foto",
+        story: "Maya sering mengedit fotonya dengan filter yang membuat wajahnya terlihat sangat berbeda. Teman-temannya mulai berkomentar bahwa Maya tidak terlihat seperti foto aslinya saat bertemu langsung.",
+        question: "Apa yang sebaiknya Maya lakukan?",
+        choices: [
+          {
+            text: "A. Menggunakan filter yang lebih natural",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Mengedit foto wajar, tapi tetap mempertahankan kesamaan dengan penampilan asli adalah pilihan yang sehat."
+          },
+          {
+            text: "B. Berhenti menggunakan media sosial sama sekali",
+            correct: false,
+            feedback: "❌ Konsekuensi: Ini terlalu ekstrem. Media sosial bisa bermanfaat jika digunakan dengan bijak dan seimbang."
+          },
+          {
+            text: "C. Menjelaskan bahwa itu hanya filter dan bukan penampilan asli",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Transparansi tentang penggunaan filter bisa mengelola ekspektasi orang lain dan menjaga kepercayaan."
+          },
+          {
+            text: "D. Mengedit foto makin ekstrem agar terlihat sempurna",
+            correct: false,
+            feedback: "❌ Konsekuensi: Ini bisa menurunkan kepercayaan diri dan menciptakan standar tidak realistis. Terimalah dirimu apa adanya!"
+          }
+        ]
+      },
+      {
+        title: "📱 Kasus 14: Screen Time & Kesehatan Mental",
+        story: "Rizki menghabiskan lebih dari 8 jam sehari untuk media sosial. Ia merasa cemas jika tidak membuka ponsel dan sulit tidur karena terus memikirkan notifikasi.",
+        question: "Apa yang harus Rizki lakukan?",
+        choices: [
+          {
+            text: "A. Mengabaikan perasaan cemas dan terus menggunakan media sosial",
+            correct: false,
+            feedback: "❌ Konsekuensi: Kesehatan mental bisa semakin terganggu dan kecanduan bisa semakin parah. Jangan abaikan tanda-tanda bahaya!"
+          },
+          {
+            text: "B. Mengatur batas waktu penggunaan dan fitur notifikasi",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Mengatur batas waktu dan notifikasi adalah langkah proaktif untuk mengontrol penggunaan media sosial."
+          },
+          {
+            text: "C. Mencari hobi lain di luar media sosial",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Menemukan kegiatan lain yang menyenangkan bisa membantu mengurangi ketergantungan pada media sosial."
+          },
+          {
+            text: "D. Berkonsultasi dengan orang dewasa tentang kecemasannya",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Berbicara tentang perasaan adalah langkah penting. Jangan ragu meminta bantuan jika merasa kesulitan."
+          }
+        ]
+      },
+      {
+        title: "🤝 Kasus 15: Netiket & Etika Digital",
+        story: "Dalam diskusi online tentang isu sosial, ada orang yang berbeda pendapat denganmu. Beberapa orang mulai menghina dan menyerang pribadi orang tersebut karena pendapatnya.",
+        question: "Apa sikap yang paling bertanggung jawab?",
+        choices: [
+          {
+            text: "A. Ikut menghina karena pendapatnya memang salah",
+            correct: false,
+            feedback: "❌ Konsekuensi: Ini adalah cyberbullying dan menciptakan lingkungan online yang toxic. Beda pendapat bukan alasan untuk menghina."
+          },
+          {
+            text: "B. Mendukung orang tersebut untuk berbicara tanpa takut dihina",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Mendukung kebebasan berpendapat dan melawan bullying adalah sikap yang berani dan bertanggung jawab."
+          },
+          {
+            text: "C. Menengahi dengan mengajak semua orang berdiskusi secara sopan",
+            correct: true,
+            feedback: "✅ Pilihan Tepat! Menjadi moderator yang adil dan mengingatkan semua orang untuk tetap sopan adalah peran penting dalam diskusi online."
+          },
+          {
+            text: "D. Diam saja agar tidak ikut-ikutan",
+            correct: false,
+            feedback: "❌ Konsekuensi: Diam sama dengan membiarkan bullying terjadi. Sebagai pengguna internet yang bertanggung jawab, kita harus melawan toxic behavior."
+          }
+        ]
+      }
+    ];
+
+    // Variabel global
+    let currentCase = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let answered = false;
+    let gameStarted = false;
+
+    // Fungsi untuk membuat partikel animasi
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 15;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 6 + 3;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 15}s`;
+        particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Fungsi untuk memulai game
+    function startGame() {
+      gameStarted = true;
+      currentCase = 0;
+      correctCount = 0;
+      wrongCount = 0;
+      updateScore();
+      
+      document.getElementById('startScreen').style.display = 'none';
+      document.getElementById('caseScreen').style.display = 'block';
+      
+      loadCase();
+    }
+
+    // Fungsi untuk memuat kasus
+    function loadCase() {
+      if (currentCase >= cases.length) {
+        showResults();
+        return;
+      }
+
+      answered = false;
+      const caseData = cases[currentCase];
+      
+      document.getElementById('caseTitle').textContent = caseData.title;
+      document.getElementById('storyText').textContent = caseData.story;
+      document.getElementById('questionText').textContent = caseData.question;
+      
+      const choicesContainer = document.getElementById('choicesContainer');
+      choicesContainer.innerHTML = '';
+      
+      caseData.choices.forEach((choice, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.textContent = choice.text;
+        btn.onclick = () => selectChoice(index);
+        choicesContainer.appendChild(btn);
+      });
+
+      document.getElementById('feedback').classList.remove('show', 'correct', 'wrong');
+      document.getElementById('nextBtn').classList.add('hide');
+      
+      updateProgressBar();
+    }
+
+    // Fungsi untuk memilih jawaban
+    function selectChoice(index) {
+      if (answered) return;
+      
+      answered = true;
+      const caseData = cases[currentCase];
+      const choice = caseData.choices[index];
+      const buttons = document.querySelectorAll('.choice-btn');
+      const feedback = document.getElementById('feedback');
+      
+      buttons.forEach((btn, i) => {
+        btn.classList.add('disabled');
+        if (i === index) {
+          btn.classList.add(choice.correct ? 'correct' : 'wrong');
+        }
+      });
+
+      feedback.innerHTML = `
+        <h4>${choice.correct ? '✅ Jawaban Benar!' : '❌ Jawaban Kurang Tepat'}</h4>
+        <p>${choice.feedback}</p>
+      `;
+      feedback.classList.add('show', choice.correct ? 'correct' : 'wrong');
+      
+      if (choice.correct) {
+        correctCount++;
+        playSound('correct');
+      } else {
+        wrongCount++;
+        playSound('wrong');
+      }
+      
+      updateScore();
+      document.getElementById('nextBtn').classList.remove('hide');
+    }
+
+    // Fungsi untuk melanjutkan ke kasus berikutnya
+    function nextCase() {
+      currentCase++;
+      loadCase();
+    }
+
+    // Fungsi untuk memperbarui skor
+    function updateScore() {
+      document.getElementById('correctScore').textContent = correctCount;
+      document.getElementById('wrongScore').textContent = wrongCount;
+    }
+
+    // Fungsi untuk memperbarui progress bar
+    function updateProgressBar() {
+      const progress = ((currentCase + 1) / cases.length) * 100;
+      document.getElementById('progressBar').style.width = `${progress}%`;
+    }
+
+    // Fungsi untuk memainkan suara
+    function playSound(type) {
+      const audio = document.getElementById(type + 'Sound');
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(e => console.error('Error playing sound:', e));
+      }
+    }
+
+    // Fungsi untuk menampilkan hasil
+    function showResults() {
+      document.getElementById('caseScreen').style.display = 'none';
+      document.getElementById('resultScreen').classList.add('show');
+      
+      // Display score
+      document.getElementById('finalScore').textContent = `${correctCount}/${cases.length}`;
+      
+      // Display message based on score
+      let message = '';
+      let emoji = '';
+      const percentage = (correctCount / cases.length) * 100;
+      
+      if (percentage >= 90) {
+        emoji = '🏆';
+        message = 'Luar biasa! Kamu sangat memahami cara bijak berinteraksi di dunia digital. Kamu adalah contoh pengguna media sosial yang bertanggung jawab!';
+      } else if (percentage >= 75) {
+        emoji = '🌟';
+        message = 'Hebat! Kamu sudah cukup memahami cara bijak menggunakan media sosial. Terus tingkatkan kesadaran digitalmu!';
+      } else if (percentage >= 60) {
+        emoji = '👍';
+        message = 'Bagus! Kamu sudah memahami beberapa konsep penting. Terus belajar untuk menjadi pengguna digital yang lebih bijak!';
+      } else if (percentage >= 40) {
+        emoji = '💪';
+        message = 'Cukup baik. Masih ada hal yang perlu dipelajari. Jangan menyerah dan terus belajar tentang etika digital!';
+      } else {
+        emoji = '📚';
+        message = 'Perlu belajar lebih banyak. Setiap orang bisa belajar menjadi pengguna digital yang bijak. Coba lagi dan pelajari konsekuensi dari setiap pilihan!';
+      }
+      
+      document.getElementById('resultEmoji').textContent = emoji;
+      document.getElementById('resultMessage').innerHTML = `
+        <p>${message}</p>
+        <p style="margin-top: 20px; font-weight: bold; color: #FDF5AA;">
+          💡 Ingat: Pilihan kecil di dunia digital bisa mencegah masalah besar di dunia nyata!
+        </p>
+      `;
+    }
+
+    // Fungsi untuk mereset game
+    function restartGame() {
+      currentCase = 0;
+      correctCount = 0;
+      wrongCount = 0;
+      answered = false;
+      gameStarted = false;
+      
+      document.getElementById('resultScreen').classList.remove('show');
+      document.getElementById('startScreen').style.display = 'block';
+      document.getElementById('caseScreen').style.display = 'none';
+      
+      updateScore();
+      document.getElementById('progressBar').style.width = '0%';
+    }
+
+    // Enhanced starfield animation
+    (function () {
+      const canvas = document.getElementById('stars');
+      const ctx = canvas.getContext('2d');
+
+      const STAR_COUNT = Math.floor((window.innerWidth * window.innerHeight) / 2000);
+      const MAX_RADIUS = 2;
+      const MIN_RADIUS = 0.4;
+      const TWINKLE_SPEED = 0.02;
+      const SHOOTING_STAR_CHANCE = 0.001;
+      const SHOOTING_STAR_SPEED = 15;
+
+      let stars = [];
+      let shootingStars = [];
+      let w = 0, h = 0, t = 0;
+
+      function rand(min, max) { return Math.random() * (max - min) + min; }
+
+      function makeStar() {
+        return {
+          x: Math.random(),
+          y: Math.random(),
+          r: rand(MIN_RADIUS, MAX_RADIUS),
+          baseAlpha: rand(0.4, 1.0),
+          twinklePhase: Math.random() * Math.PI * 2,
+          twinkleSpeed: rand(TWINKLE_SPEED * 0.5, TWINKLE_SPEED * 1.5)
+        };
+      }
+
+      function makeShootingStar() {
+        const angle = rand(0, Math.PI * 0.5);
+        return {
+          x: rand(0, 0.5),
+          y: rand(0, 0.5),
+          vx: Math.cos(angle) * SHOOTING_STAR_SPEED * 0.001,
+          vy: Math.sin(angle) * SHOOTING_STAR_SPEED * 0.001,
+          length: rand(0.05, 0.15),
+          alpha: 1.0
+        };
+      }
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+
+      function init() {
+        resize();
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          stars.push(makeStar());
+        }
+      }
+
+      function animate() {
+        t += 0.01;
+        ctx.fillStyle = 'rgba(17, 63, 103, 0.1)';
+        ctx.fillRect(0, 0, w, h);
+
+        stars.forEach(star => {
+          const twinkle = Math.sin(star.twinklePhase + t * star.twinkleSpeed) * 0.5 + 0.5;
+          const alpha = star.baseAlpha * twinkle;
+          
+          ctx.beginPath();
+          ctx.arc(star.x * w, star.y * h, star.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+        });
+
+        if (Math.random() < SHOOTING_STAR_CHANCE) {
+          shootingStars.push(makeShootingStar());
+        }
+
+        shootingStars = shootingStars.filter(star => {
+          star.x += star.vx;
+          star.y += star.vy;
+          star.alpha -= 0.01;
+
+          if (star.alpha <= 0) return false;
+
+          const gradient = ctx.createLinearGradient(
+            star.x * w, star.y * h,
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${star.alpha})`);
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(star.x * w, star.y * h);
+          ctx.lineTo(
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          ctx.stroke();
+
+          return true;
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', init);
+      init();
+      animate();
+    })();
+
+    // Initialize particles when page loads
+    window.onload = createParticles;
+  </script>
+</body>
+</html>

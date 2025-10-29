@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dampak Sosial Informatika - Materi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #113F67;
+      color: #1c1c1c;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    canvas#stars {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(253, 245, 170, 0.03), transparent 50%);
+    }
+
+    /* === MODERN HEADER === */
+    header {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    header h1 {
+      font-size: 1.8em;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px;
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+    }
+
+    nav a {
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+      font-size: 0.95em;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 10px 20px;
+      border-radius: 50px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    nav a:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    nav a.active {
+      color: #113F67;
+      background: #FDF5AA;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(253, 245, 170, 0.3);
+    }
+
+    /* === FLOATING NAV BUTTONS === */
+    .nav-buttons {
+      position: fixed;
+      bottom: 390px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1000px;
+      z-index: 50;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 500;
+      padding: 14px 30px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn:hover {
+      background: rgba(253, 245, 170, 0.2);
+      border-color: rgba(253, 245, 170, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.2);
+    }
+
+    /* === MATERI SECTION === */
+    .materi {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px 100px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(253, 245, 170, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      padding: 10px 20px;
+      border-radius: 50px;
+      color: #FDF5AA;
+      font-size: 1.2em;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-size: 3em;
+      font-weight: 800;
+      line-height: 1.1;
+      color: #ffffff;
+      margin-bottom: 15px;
+      letter-spacing: -2px;
+    }
+
+    .section-header .gradient-text {
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 50%, #FDF5AA 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .section-header p {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* === MATERI GRID === */
+    .materi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      max-width: 1200px;
+      width: 100%;
+      animation: fadeInScale 1s ease-out 0.3s both;
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .materi-card {
+      background: rgba(40, 65, 109, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 30px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    }
+
+    .materi-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.08) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .materi-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 25px 70px rgba(253, 245, 170, 0.2);
+      border-color: rgba(253, 245, 170, 0.3);
+    }
+
+    .card-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 25px;
+      background: linear-gradient(135deg, rgba(253, 245, 170, 0.25), rgba(253, 245, 170, 0.1));
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      color: #FDF5AA;
+      margin-bottom: -50px;
+      position: relative;
+      z-index: 1;
+      transition: all 0.3s ease;
+    }
+
+    .materi-card:hover .card-icon {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 15px 40px rgba(253, 245, 170, 0.4);
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-content h3 {
+      color: #ffffff;
+      font-size: 1.6em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      margin-left: 100px;
+      line-height: 1.3;
+    }
+
+    .card-content p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1em;
+      line-height: 1.7;
+      margin-bottom: 25px;
+    }
+
+    .card-btn {
+      background: linear-gradient(135deg, #FDF5AA 0%, #f4e87c 100%);
+      color: #113F67;
+      padding: 14px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 30px rgba(253, 245, 170, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.6s;
+    }
+
+    .card-btn:hover::before {
+      left: 100%;
+    }
+
+    .card-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.5);
+    }
+
+    .card-btn i {
+      transition: transform 0.3s ease;
+    }
+
+    .card-btn:hover i {
+      transform: translateX(5px);
+    }
+
+    /* === FOOTER === */
+    footer {
+      background: rgba(253, 245, 170, 0.95);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 30px;
+      color: #113F67;
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(17, 63, 103, 0.1);
+    }
+
+    footer p {
+      font-weight: 500;
+      font-size: 0.95em;
+    }
+
+    /* === FLOATING PARTICLES === */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.8), transparent);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+        transform: translateY(90vh) translateX(20px) scale(1);
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) translateX(100px) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 1024px) {
+      .materi-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+
+      .section-header h2 {
+        font-size: 2.5em;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        padding: 15px 25px;
+        gap: 15px;
+      }
+
+      header h1 {
+        font-size: 1.3em;
+      }
+
+      nav {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      nav a {
+        padding: 8px 15px;
+        font-size: 0.85em;
+      }
+
+      .materi {
+        padding: 30px 20px 80px;
+      }
+
+      .section-header {
+        margin-bottom: 40px;
+      }
+
+      .section-header h2 {
+        font-size: 2em;
+      }
+
+      .section-header p {
+        font-size: 1em;
+      }
+
+      .materi-card {
+        padding: 30px;
+      }
+
+      .card-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 1.8em;
+      }
+
+      .card-content h3 {
+        font-size: 1.4em;
+      }
+
+      .nav-buttons {
+        bottom: 20px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        padding: 12px 24px;
+        font-size: 0.9em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section-header h2 {
+        font-size: 1.8em;
+      }
+
+      .section-badge {
+        font-size: 0.8em;
+        padding: 8px 16px;
+      }
+
+      .materi-card {
+        padding: 25px;
+      }
+
+      .card-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5em;
+      }
+
+      .card-content h3 {
+        font-size: 1.3em;
+      }
+
+      .card-content p {
+        font-size: 0.95em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="overlay"></div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <h1>Dampak Sosial Informatika</h1>
+    <nav>
+      <a href="index.html">Beranda</a>
+      <a href="Materi.html" class="active">Materi</a>
+      <a href="Game.html">Game & Kuis</a>
+      <a href="Tugas.html">Tugas</a>
+      <a href="Evaluasi.html">Evaluasi</a>
+    </nav>
+  </header>
+
+  <div class="nav-buttons">
+    <a href="index.html" class="nav-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+    <a href="Game.html" class="nav-btn">
+      Next <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <section class="materi">
+    <div class="section-header">
+      <div class="section-badge">
+        <i class="fas fa-book-open"></i>
+        <span>Materi Pembelajaran</span>
+      </div>
+      
+      <h2 class="gradient-text">Pelajari Materi</h2>
+      <p>Pilih materi yang ingin kamu pelajari untuk memahami dampak sosial informatika secara mendalam</p>
+    </div>
+
+    <div class="materi-grid">
+      <div class="materi-card">
+        <div class="card-icon">
+          <i class="fas fa-bullseye"></i>
+        </div>
+        <div class="card-content">
+          <h3>Tujuan Pembelajaran</h3>
+          <p>Pahami tujuan dan capaian pembelajaran yang akan kamu peroleh dalam bab ini, termasuk kompetensi yang akan dikuasai.</p>
+          <a href="tujuan.html" class="card-btn">
+            Pelajari <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="materi-card">
+        <div class="card-icon">
+          <i class="fas fa-folder"></i>
+        </div>
+        <div class="card-content">
+          <h3>Materi Presentasi</h3>
+          <p>Akses slide presentasi interaktif dengan visualisasi menarik dan contoh nyata dari kehidupan sehari-hari.</p>
+          <a href="Presentasi.html" class="card-btn">
+            Lihat Presentasi <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="materi-card">
+        <div class="card-icon">
+          <i class="fas fa-book"></i>
+        </div>
+        <div class="card-content">
+          <h3>Buku Murid</h3>
+          <p>Baca atau unduh buku murid yang berisi penjelasan lengkap, studi kasus, dan latihan soal untuk pemahaman lebih dalam.</p>
+          <a href="https://static.perangkat-ajar.belajar.id/Buku%20Murid%20Informatika%20-%20Informatika%20SMP%20Kelas%20VIII%20Bab%208%20-%20Fase%20D.pdf" class="card-btn">
+            Baca Buku <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="materi-card">
+        <div class="card-icon">
+          <i class="fas fa-play-circle"></i>
+        </div>
+        <div class="card-content">
+          <h3>Video Pembelajaran</h3>
+          <p>Tonton video edukasi dengan animasi dan narasi yang mudah dipahami untuk pengalaman belajar yang lebih menyenangkan.</p>
+          <a href="video.html" class="card-btn">
+            Tonton Video <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Media Pembelajaran Informatika | Dibuat oleh Anggi Clementine (237111039)</p>
+  </footer>
+
+  <script>
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 15;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 6 + 3;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 15}s`;
+        particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+    
+    createParticles();
+    
+    // Enhanced starfield animation
+    (function () {
+      const canvas = document.getElementById('stars');
+      const ctx = canvas.getContext('2d');
+
+      const STAR_COUNT = Math.floor((window.innerWidth * window.innerHeight) / 2000);
+      const MAX_RADIUS = 2;
+      const MIN_RADIUS = 0.4;
+      const TWINKLE_SPEED = 0.02;
+      const SHOOTING_STAR_CHANCE = 0.001;
+      const SHOOTING_STAR_SPEED = 15;
+
+      let stars = [];
+      let shootingStars = [];
+      let w = 0, h = 0, t = 0;
+
+      function rand(min, max) { return Math.random() * (max - min) + min; }
+
+      function makeStar() {
+        return {
+          x: Math.random(),
+          y: Math.random(),
+          r: rand(MIN_RADIUS, MAX_RADIUS),
+          baseAlpha: rand(0.4, 1.0),
+          twinklePhase: Math.random() * Math.PI * 2,
+          twinkleSpeed: rand(TWINKLE_SPEED * 0.5, TWINKLE_SPEED * 1.5)
+        };
+      }
+
+      function makeShootingStar() {
+        const angle = rand(0, Math.PI * 0.5);
+        return {
+          x: rand(0, 0.5),
+          y: rand(0, 0.5),
+          vx: Math.cos(angle) * SHOOTING_STAR_SPEED * 0.001,
+          vy: Math.sin(angle) * SHOOTING_STAR_SPEED * 0.001,
+          length: rand(0.05, 0.15),
+          alpha: 1.0
+        };
+      }
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+
+      function init() {
+        resize();
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          stars.push(makeStar());
+        }
+      }
+
+      function animate() {
+        t += 0.01;
+        ctx.fillStyle = 'rgba(17, 63, 103, 0.1)';
+        ctx.fillRect(0, 0, w, h);
+
+        stars.forEach(star => {
+          const twinkle = Math.sin(star.twinklePhase + t * star.twinkleSpeed) * 0.5 + 0.5;
+          const alpha = star.baseAlpha * twinkle;
+          
+          ctx.beginPath();
+          ctx.arc(star.x * w, star.y * h, star.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+        });
+
+        if (Math.random() < SHOOTING_STAR_CHANCE) {
+          shootingStars.push(makeShootingStar());
+        }
+
+        shootingStars = shootingStars.filter(star => {
+          star.x += star.vx;
+          star.y += star.vy;
+          star.alpha -= 0.01;
+
+          if (star.alpha <= 0) return false;
+
+          const gradient = ctx.createLinearGradient(
+            star.x * w, star.y * h,
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${star.alpha})`);
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(star.x * w, star.y * h);
+          ctx.lineTo(
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          ctx.stroke();
+
+          return true;
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', init);
+      init();
+      animate();
+    })();
+  </script>
+</body>
+</html>

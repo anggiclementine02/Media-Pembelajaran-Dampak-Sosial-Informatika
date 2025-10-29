@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kartu Memori</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #113F67;
+      color: #1c1c1c;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    canvas#stars {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(253, 245, 170, 0.03), transparent 50%);
+    }
+
+    /* === MODERN HEADER === */
+    header {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    header h1 {
+      font-size: 1.8em;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    .home-btn {
+      background: rgba(253, 245, 170, 0.2);
+      color: #ffffff;
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .home-btn:hover {
+      background: rgba(253, 245, 170, 0.3);
+      border-color: rgba(253, 245, 170, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* === FLOATING NAV BUTTONS === */
+    .nav-buttons {
+      position: fixed;
+      bottom: 390px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1000px;
+      z-index: 50;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 500;
+      padding: 14px 30px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn:hover {
+      background: rgba(253, 245, 170, 0.2);
+      border-color: rgba(253, 245, 170, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.2);
+    }
+
+    /* === CONTENT SECTION === */
+    .content {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px 100px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(253, 245, 170, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      padding: 10px 20px;
+      border-radius: 50px;
+      color: #FDF5AA;
+      font-size: 1.2em;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-size: 3em;
+      font-weight: 800;
+      line-height: 1.1;
+      color: #ffffff;
+      margin-bottom: 15px;
+      letter-spacing: -2px;
+    }
+
+    .section-header .gradient-text {
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 50%, #FDF5AA 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .section-header p {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* === GAME CONTAINER === */
+    .game-container {
+      background: rgba(40, 65, 109, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 30px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      max-width: 1200px;
+      width: 100%;
+      animation: fadeInScale 1s ease-out 0.3s both;
+    }
+
+    .game-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.08) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .game-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+    }
+
+    .matches-icon {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+    }
+
+    .moves-icon {
+      background: rgba(33, 150, 243, 0.2);
+      color: #2196F3;
+    }
+
+    .time-icon {
+      background: rgba(255, 152, 0, 0.2);
+      color: #FF9800;
+    }
+
+    .stat-text {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #FDF5AA;
+    }
+
+    .memory-game {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .memory-card {
+      aspect-ratio: 2/1;
+      position: relative;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+    }
+
+    .memory-card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .memory-card.matched {
+      animation: matchPulse 0.6s ease;
+      pointer-events: none;
+    }
+
+    @keyframes matchPulse {
+      0% { transform: scale(1) rotateY(180deg); }
+      50% { transform: scale(1.1) rotateY(180deg); }
+      100% { transform: scale(1) rotateY(180deg); }
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .card-front {
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      color: #113F67;
+      border: 2px solid rgba(253, 245, 170, 0.5);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-back {
+      background: rgba(255, 255, 255, 0.9);
+      color: #113F67;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      transform: rotateY(180deg);
+      font-weight: 600;
+      font-size: 0.9em;
+      color: white;
+      line-height: 1.4;
+
+    }
+
+    .card-back.term {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.1));
+      border-color: rgba(76, 175, 80, 0.5);
+    }
+
+    .card-back.definition {
+      background: linear-gradient(135deg, rgba(33, 150, 243, 0.2), rgba(33, 150, 243, 0.1));
+      border-color: rgba(33, 150, 243, 0.5);
+    }
+
+    .card-number {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(17, 63, 103, 0.8);
+      color: #FDF5AA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7em;
+      font-weight: 700;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      color: #113F67;
+      padding: 16px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 30px rgba(253, 245, 170, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.5);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* === RESULT MODAL === */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+      background: rgba(40, 65, 109, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      animation: scaleIn 0.3s ease-out;
+    }
+
+    @keyframes scaleIn {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: rgba(253, 245, 170, 0.2);
+      transform: rotate(90deg);
+    }
+
+    .result-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FDF5AA 0%, #f4e87c 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2em;
+      color: #113F67;
+    }
+
+    .result-title {
+      color: #ffffff;
+      font-size: 1.8em;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .result-score {
+      font-size: 3em;
+      font-weight: 800;
+      color: #FDF5AA;
+      margin-bottom: 20px;
+    }
+
+    .result-message {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.1em;
+      line-height: 1.7;
+      margin-bottom: 30px;
+    }
+
+    .result-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+
+    .result-stat {
+      text-align: center;
+    }
+
+    .result-stat-value {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #FDF5AA;
+    }
+
+    .result-stat-label {
+      font-size: 0.9em;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* === FOOTER === */
+    footer {
+      background: rgba(253, 245, 170, 0.95);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 30px;
+      color: #113F67;
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(17, 63, 103, 0.1);
+    }
+
+    footer p {
+      font-weight: 500;
+      font-size: 0.95em;
+    }
+
+    /* === FLOATING PARTICLES === */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.8), transparent);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+        transform: translateY(90vh) translateX(20px) scale(1);
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) translateX(100px) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 1024px) {
+      .memory-game {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        padding: 15px 25px;
+        gap: 15px;
+      }
+
+      header h1 {
+        font-size: 1.3em;
+      }
+
+      .content {
+        padding: 30px 20px 80px;
+      }
+
+      .section-header {
+        margin-bottom: 40px;
+      }
+
+      .section-header h2 {
+        font-size: 2em;
+      }
+
+      .section-header p {
+        font-size: 1em;
+      }
+
+      .game-container {
+        padding: 30px;
+      }
+
+      .memory-game {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .nav-buttons {
+        bottom: 20px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        padding: 12px 24px;
+        font-size: 0.9em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section-header h2 {
+        font-size: 1.8em;
+      }
+
+      .section-badge {
+        font-size: 0.8em;
+        padding: 8px 16px;
+      }
+
+      .game-container {
+        padding: 25px;
+      }
+
+      .memory-game {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .card-back {
+        font-size: 0.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="overlay"></div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <h1>Memory Card</h1>
+    <a href="index.html" class="home-btn">
+      <i class="fas fa-home"></i> Kembali ke Beranda
+    </a>
+  </header>
+
+  <div class="nav-buttons">
+    <a href="Game.html" class="nav-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+    <a href="index.html" class="nav-btn">
+      Next <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <section class="content">
+    <div class="section-header">
+      <div class="section-badge">
+        <i class="fas fa-brain"></i>
+        <span>Game Interaktif</span>
+      </div>
+      
+      <h2 class="gradient-text">Klasifikasi Media Sosial</h2>
+      <p>Cocokkan istilah dengan definisinya dalam game kartu memori bertema Jenis-Jenis Media Sosial!</p>
+    </div>
+
+    <div class="game-container">
+      <div class="game-stats">
+        <div class="stat-item">
+          <div class="stat-icon matches-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <div class="stat-text">
+            Cocok: <span class="stat-value" id="matches">0</span>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon moves-icon">
+            <i class="fas fa-hand-pointer"></i>
+          </div>
+          <div class="stat-text">
+            Langkah: <span class="stat-value" id="moves">0</span>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon time-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-text">
+            Waktu: <span class="stat-value" id="timer">00:00</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="memory-game" id="memoryGame"></div>
+      
+      <div class="controls">
+        <button class="btn btn-secondary" onclick="resetGame()">
+          <i class="fas fa-redo"></i> Ulangi
+        </button>
+        <button class="btn" onclick="showHint()">
+          <i class="fas fa-lightbulb"></i> Petunjuk
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Result Modal -->
+  <div id="resultModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="result-icon">
+        <i class="fas fa-trophy"></i>
+      </div>
+      <h3 class="result-title">Selamat!</h3>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="result-stat-value" id="finalMatches">0</div>
+          <div class="result-stat-label">Pasangan</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-value" id="finalMoves">0</div>
+          <div class="result-stat-label">Langkah</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-value" id="finalTime">00:00</div>
+          <div class="result-stat-label">Waktu</div>
+        </div>
+      </div>
+      <p class="result-message" id="resultMessage"></p>
+      <button class="btn" onclick="closeModal()">
+        Tutup <i class="fas fa-check"></i>
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Media Pembelajaran Informatika | Dibuat oleh Anggi Clementine (237111039)</p>
+  </footer>
+
+  <script>
+    // Card data with terms and definitions
+    const cardData = [
+      {
+        id: 1,
+        term: "Blog",
+        definition: "Platform untuk menulis dan mempublikasikan artikel, misalnya WordPress dan Blogger"
+      },
+      {
+        id: 2,
+        term: "Forum",
+        definition: "Tempat diskusi online berbasis topik, misalnya PhpBB dan Stack Overflow"
+      },
+      {
+        id: 3,
+        term: "Microblog",
+        definition: "Media untuk berbagi postingan singkat dan cepat, misalnya Wix, Tumblr, dan Medium"
+      },
+      {
+        id: 4,
+        term: "Photo Sharing",
+        definition: "Layanan untuk menyimpan dan berbagi foto, misalnya Photobucket, Google Photos, dan Flickr, Freepik"
+      },
+      {
+        id: 5,
+        term: "Video Sharing",
+        definition: "Platform untuk mengupload dan menonton video, misalnya YouTube, Vidio, dan TikTok"
+      },
+      {
+        id: 6,
+        term: "Social Network",
+        definition: "Jejaring sosial untuk membuat profil dan memperluas relasi, misalnya Facebook dan Instagram"
+      },
+      {
+        id: 7,
+        term: "Social Gaming",
+        definition: "Game online dengan interaksi sosial antar pemain, misalnya FarmVille, World of Warcraft, dan Mafia Wars"
+      },
+      {
+        id: 8,
+        term: "Social Bookmarking",
+        definition: "Media untuk menyimpan dan membagikan tautan favorit, misalnya Twitter dan Pinterest"
+      }
+    ];
+
+    // Game state
+    let cards = [];
+    let flippedCards = [];
+    let matchedPairs = 0;
+    let moves = 0;
+    let isProcessing = false;
+    let startTime;
+    let timerInterval;
+
+    // Initialize game
+    function initGame() {
+      createCards();
+      renderGame();
+      startTimer();
+      createParticles();
+    }
+
+    // Create card deck
+    function createCards() {
+      cards = [];
+      
+      // Create pairs of cards (term and definition)
+      cardData.forEach(item => {
+        cards.push({
+          id: `term-${item.id}`,
+          content: item.term,
+          pairId: item.id,
+          type: 'term'
+        });
+        
+        cards.push({
+          id: `def-${item.id}`,
+          content: item.definition,
+          pairId: item.id,
+          type: 'definition'
+        });
+      });
+      
+      // Shuffle cards
+      cards = shuffleArray(cards);
+    }
+
+    // Shuffle array
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    }
+
+    // Render game board
+    function renderGame() {
+      const gameBoard = document.getElementById('memoryGame');
+      gameBoard.innerHTML = '';
+      
+      cards.forEach((card, index) => {
+        const cardElement = document.createElement('div');
+        cardElement.className = 'memory-card';
+        cardElement.dataset.index = index;
+        cardElement.dataset.pairId = card.pairId;
+        cardElement.dataset.type = card.type;
+        
+        cardElement.innerHTML = `
+          <div class="card-face card-front">
+            <div class="card-number">${index + 1}</div>
+            <i class="fas fa-question fa-2x"></i>
+          </div>
+          <div class="card-face card-back ${card.type}">
+            ${card.content}
+          </div>
+        `;
+        
+        cardElement.addEventListener('click', () => flipCard(index));
+        gameBoard.appendChild(cardElement);
+      });
+    }
+
+    // Flip card
+    function flipCard(index) {
+      if (isProcessing) return;
+      
+      const card = document.querySelector(`.memory-card[data-index="${index}"]`);
+      
+      // Check if card is already flipped or matched
+      if (card.classList.contains('flipped') || card.classList.contains('matched')) {
+        return;
+      }
+      
+      // Flip the card
+      card.classList.add('flipped');
+      flippedCards.push(index);
+      
+      // Check if two cards are flipped
+      if (flippedCards.length === 2) {
+        isProcessing = true;
+        moves++;
+        updateMoves();
+        
+        setTimeout(() => {
+          checkMatch();
+        }, 1000);
+      }
+    }
+
+    // Check if flipped cards match
+    function checkMatch() {
+      const firstCard = document.querySelector(`.memory-card[data-index="${flippedCards[0]}"]`);
+      const secondCard = document.querySelector(`.memory-card[data-index="${flippedCards[1]}"]`);
+      
+      const firstPairId = firstCard.dataset.pairId;
+      const secondPairId = secondCard.dataset.pairId;
+      
+      if (firstPairId === secondPairId) {
+        // Cards match
+        firstCard.classList.add('matched');
+        secondCard.classList.add('matched');
+        matchedPairs++;
+        updateMatches();
+        
+        // Check if game is complete
+        if (matchedPairs === cardData.length) {
+          endGame();
+        }
+      } else {
+        // Cards don't match
+        setTimeout(() => {
+          firstCard.classList.remove('flipped');
+          secondCard.classList.remove('flipped');
+        }, 500);
+      }
+      
+      // Reset flipped cards array
+      flippedCards = [];
+      isProcessing = false;
+    }
+
+    // Update matches count
+    function updateMatches() {
+      document.getElementById('matches').textContent = matchedPairs;
+    }
+
+    // Update moves count
+    function updateMoves() {
+      document.getElementById('moves').textContent = moves;
+    }
+
+    // Start timer
+    function startTimer() {
+      startTime = Date.now();
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = Math.floor(elapsed / 60);
+        const seconds = elapsed % 60;
+        document.getElementById('timer').textContent = 
+          `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    // Show hint
+    function showHint() {
+      // Find unmatched cards
+      const unmatchedCards = document.querySelectorAll('.memory-card:not(.matched)');
+      
+      if (unmatchedCards.length === 0) return;
+      
+      // Find a pair of unmatched cards
+      const randomCard = unmatchedCards[Math.floor(Math.random() * unmatchedCards.length)];
+      const pairId = randomCard.dataset.pairId;
+      
+      // Highlight both cards of the pair
+      document.querySelectorAll(`.memory-card[data-pairId="${pairId}"]:not(.matched)`).forEach(card => {
+        card.style.boxShadow = '0 0 20px rgba(253, 245, 170, 0.8)';
+        setTimeout(() => {
+          card.style.boxShadow = '';
+        }, 2000);
+      });
+    }
+
+    // Reset game
+    function resetGame() {
+      // Reset game state
+      flippedCards = [];
+      matchedPairs = 0;
+      moves = 0;
+      isProcessing = false;
+      
+      // Reset UI
+      updateMatches();
+      updateMoves();
+      
+      // Reset timer
+      clearInterval(timerInterval);
+      startTimer();
+      
+      // Reinitialize game
+      createCards();
+      renderGame();
+    }
+
+    // End game
+    function endGame() {
+      clearInterval(timerInterval);
+      
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const minutes = Math.floor(elapsed / 60);
+      const seconds = elapsed % 60;
+      
+      // Update result modal
+      document.getElementById('finalMatches').textContent = matchedPairs;
+      document.getElementById('finalMoves').textContent = moves;
+      document.getElementById('finalTime').textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      // Calculate efficiency score
+      const efficiency = Math.round((cardData.length / moves) * 100);
+      let message = '';
+      
+      if (efficiency >= 80) {
+        message = 'Luar biasa! Kamu sangat efisien dalam mencocokkan kartu. Kemampuan memorimu sangat baik!';
+      } else if (efficiency >= 60) {
+        message = 'Bagus! Kamu berhasil menyelesaikan game dengan cukup efisien. Terus latih untuk meningkatkan kemampuanmu!';
+      } else if (efficiency >= 40) {
+        message = 'Cukup baik! Kamu berhasil menyelesaikan game. Terus berlatih untuk meningkatkan efisiensi dan daya ingatmu!';
+      } else {
+        message = 'Hebat! Kamu berhasil menyelesaikan game. Daya ingat adalah otot yang perlu dilatih terus, jangan menyerah!';
+      }
+      
+      document.getElementById('resultMessage').textContent = message;
+      document.getElementById('resultModal').classList.add('active');
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById('resultModal').classList.remove('active');
+    }
+
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 15;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 6 + 3;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 15}s`;
+        particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Enhanced starfield animation
+    (function () {
+      const canvas = document.getElementById('stars');
+      const ctx = canvas.getContext('2d');
+
+      const STAR_COUNT = Math.floor((window.innerWidth * window.innerHeight) / 2000);
+      const MAX_RADIUS = 2;
+      const MIN_RADIUS = 0.4;
+      const TWINKLE_SPEED = 0.02;
+      const SHOOTING_STAR_CHANCE = 0.001;
+      const SHOOTING_STAR_SPEED = 15;
+
+      let stars = [];
+      let shootingStars = [];
+      let w = 0, h = 0, t = 0;
+
+      function rand(min, max) { return Math.random() * (max - min) + min; }
+
+      function makeStar() {
+        return {
+          x: Math.random(),
+          y: Math.random(),
+          r: rand(MIN_RADIUS, MAX_RADIUS),
+          baseAlpha: rand(0.4, 1.0),
+          twinklePhase: Math.random() * Math.PI * 2,
+          twinkleSpeed: rand(TWINKLE_SPEED * 0.5, TWINKLE_SPEED * 1.5)
+        };
+      }
+
+      function makeShootingStar() {
+        const angle = rand(0, Math.PI * 0.5);
+        return {
+          x: rand(0, 0.5),
+          y: rand(0, 0.5),
+          vx: Math.cos(angle) * SHOOTING_STAR_SPEED * 0.001,
+          vy: Math.sin(angle) * SHOOTING_STAR_SPEED * 0.001,
+          length: rand(0.05, 0.15),
+          alpha: 1.0
+        };
+      }
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+
+      function init() {
+        resize();
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          stars.push(makeStar());
+        }
+      }
+
+      function animate() {
+        t += 0.01;
+        ctx.fillStyle = 'rgba(17, 63, 103, 0.1)';
+        ctx.fillRect(0, 0, w, h);
+
+        stars.forEach(star => {
+          const twinkle = Math.sin(star.twinklePhase + t * star.twinkleSpeed) * 0.5 + 0.5;
+          const alpha = star.baseAlpha * twinkle;
+          
+          ctx.beginPath();
+          ctx.arc(star.x * w, star.y * h, star.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+        });
+
+        if (Math.random() < SHOOTING_STAR_CHANCE) {
+          shootingStars.push(makeShootingStar());
+        }
+
+        shootingStars = shootingStars.filter(star => {
+          star.x += star.vx;
+          star.y += star.vy;
+          star.alpha -= 0.01;
+
+          if (star.alpha <= 0) return false;
+
+          const gradient = ctx.createLinearGradient(
+            star.x * w, star.y * h,
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${star.alpha})`);
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(star.x * w, star.y * h);
+          ctx.lineTo(
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          ctx.stroke();
+
+          return true;
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', init);
+      init();
+      animate();
+    })();
+
+    // Initialize game when page loads
+    window.onload = initGame;
+  </script>
+</body>
+</html>

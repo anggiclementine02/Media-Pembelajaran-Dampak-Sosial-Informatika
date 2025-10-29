@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoax atau Fakta - Dampak Sosial Informatika</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #113F67;
+      color: #1c1c1c;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    canvas#stars {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(253, 245, 170, 0.03), transparent 50%);
+    }
+
+    /* === MODERN HEADER === */
+    header {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    header h1 {
+      font-size: 1.8em;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    .home-btn {
+      background: rgba(253, 245, 170, 0.2);
+      color: #ffffff;
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .home-btn:hover {
+      background: rgba(253, 245, 170, 0.3);
+      border-color: rgba(253, 245, 170, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* === FLOATING NAV BUTTONS === */
+    .nav-buttons {
+      position: fixed;
+      bottom: 390px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1000px;
+      z-index: 50;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 500;
+      padding: 14px 30px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn:hover {
+      background: rgba(253, 245, 170, 0.2);
+      border-color: rgba(253, 245, 170, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.2);
+    }
+
+    /* === CONTENT SECTION === */
+    .content {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px 100px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(253, 245, 170, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      padding: 10px 20px;
+      border-radius: 50px;
+      color: #FDF5AA;
+      font-size: 1.2em;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-size: 3em;
+      font-weight: 800;
+      line-height: 1.1;
+      color: #ffffff;
+      margin-bottom: 15px;
+      letter-spacing: -2px;
+    }
+
+    .section-header .gradient-text {
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 50%, #FDF5AA 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .section-header p {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* === GAME CONTAINER === */
+    .game-container {
+      background: rgba(40, 65, 109, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 30px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      max-width: 900px;
+      width: 100%;
+      animation: fadeInScale 1s ease-out 0.3s both;
+    }
+
+    .game-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.08) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .progress-container {
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, #FDF5AA, #f5e878);
+      transition: width 0.5s ease;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .progress::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    .score-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .score-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .score-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+    }
+
+    .correct-icon {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+    }
+
+    .wrong-icon {
+      background: rgba(244, 67, 54, 0.2);
+      color: #F44336;
+    }
+
+    .score-text {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .score-value {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #FDF5AA;
+    }
+
+    .card-container {
+      perspective: 1000px;
+      margin-bottom: 30px;
+      height: 300px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .statement-card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+    }
+
+    .statement-card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .card-front {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-back {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transform: rotateY(180deg);
+    }
+
+    .card-back.correct {
+      background: rgba(76, 175, 80, 0.1);
+      border-color: rgba(76, 175, 80, 0.3);
+    }
+
+    .card-back.wrong {
+      background: rgba(244, 67, 54, 0.1);
+      border-color: rgba(244, 67, 54, 0.3);
+    }
+
+    .statement-number {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      color: #113F67;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2em;
+    }
+
+    .statement-text {
+      font-size: 1.4em;
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 1.5;
+      margin-bottom: 30px;
+    }
+
+    .result-icon {
+      font-size: 4em;
+      margin-bottom: 20px;
+    }
+
+    .result-icon.correct {
+      color: #4CAF50;
+    }
+
+    .result-icon.wrong {
+      color: #F44336;
+    }
+
+    .result-text {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 15px;
+    }
+
+    .result-explanation {
+      font-size: 1.1em;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.5;
+    }
+
+    .options-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .option-btn {
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .option-btn:active::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .hoax-btn {
+      background: linear-gradient(135deg, #F44336, #d32f2f);
+      color: white;
+      box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+    }
+
+    .hoax-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(244, 67, 54, 0.4);
+    }
+
+    .fact-btn {
+      background: linear-gradient(135deg, #4CAF50, #388E3C);
+      color: white;
+      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+    }
+
+    .fact-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+    }
+
+    .option-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* === RESULT PAGE === */
+    .result-container {
+      text-align: center;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .result-title {
+      font-size: 2.2em;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .result-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #113F67, #FDF5AA);
+      border-radius: 3px;
+    }
+
+    .result-score {
+      font-size: 3.5em;
+      font-weight: 700;
+      color: #FDF5AA;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .result-message {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 30px;
+      max-width: 80%;
+    }
+
+    .restart-btn {
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      color: #113F67;
+      padding: 16px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 30px rgba(253, 245, 170, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+
+    .restart-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.5);
+    }
+
+    /* === FOOTER === */
+    footer {
+      background: rgba(253, 245, 170, 0.95);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 30px;
+      color: #113F67;
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(17, 63, 103, 0.1);
+    }
+
+    footer p {
+      font-weight: 500;
+      font-size: 0.95em;
+    }
+
+    /* === FLOATING PARTICLES === */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.8), transparent);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+        transform: translateY(90vh) translateX(20px) scale(1);
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) translateX(100px) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 1024px) {
+      .section-header h2 {
+        font-size: 2.5em;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        padding: 15px 25px;
+        gap: 15px;
+      }
+
+      header h1 {
+        font-size: 1.3em;
+      }
+
+      .content {
+        padding: 30px 20px 80px;
+      }
+
+      .section-header {
+        margin-bottom: 40px;
+      }
+
+      .section-header h2 {
+        font-size: 2em;
+      }
+
+      .section-header p {
+        font-size: 1em;
+      }
+
+      .game-container {
+        padding: 30px;
+      }
+
+      .statement-text {
+        font-size: 1.2em;
+      }
+
+      .options-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .option-btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+      }
+
+      .nav-buttons {
+        bottom: 20px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        padding: 12px 24px;
+        font-size: 0.9em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section-header h2 {
+        font-size: 1.8em;
+      }
+
+      .section-badge {
+        font-size: 0.8em;
+        padding: 8px 16px;
+      }
+
+      .game-container {
+        padding: 25px;
+      }
+
+      .statement-text {
+        font-size: 1.1em;
+      }
+
+      .card-container {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="overlay"></div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <h1>Hoax atau Fakta</h1>
+    <a href="index.html" class="home-btn">
+      <i class="fas fa-home"></i> Kembali ke Beranda
+    </a>
+  </header>
+
+  <div class="nav-buttons">
+    <a href="Game.html" class="nav-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+    <a href="index.html" class="nav-btn">
+      Next <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <section class="content">
+    <div class="section-header">
+      <div class="section-badge">
+        <i class="fas fa-gamepad"></i>
+        <span>Game Interaktif</span>
+      </div>
+      
+      <h2 class="gradient-text">Hoax atau Fakta</h2>
+      <p>Uji kemampuanmu dalam membedakan informasi yang benar dan salah. Pilihlah Hoax atau Fakta untuk setiap pernyataan!</p>
+    </div>
+
+    <div class="game-container">
+      <div class="game-container" id="gameContainer">
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+          </div>
+        </div>
+        
+        <div class="score-container">
+          <div class="score-item">
+            <div class="score-icon correct-icon">
+              <i class="fas fa-check"></i>
+            </div>
+            <div class="score-text">
+              Benar: <span class="score-value" id="correctScore">0</span>
+            </div>
+          </div>
+          
+          <div class="score-item">
+            <div class="score-icon wrong-icon">
+              <i class="fas fa-times"></i>
+            </div>
+            <div class="score-text">
+              Salah: <span class="score-value" id="wrongScore">0</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-container">
+          <div class="statement-card" id="statementCard">
+            <div class="card-face card-front">
+              <div class="statement-number" id="statementNumber">1</div>
+              <div class="statement-text" id="statementText">
+                Memuat pernyataan...
+              </div>
+            </div>
+            <div class="card-face card-back" id="cardBack">
+              <div class="result-icon" id="resultIcon"></div>
+              <div class="result-text" id="resultText"></div>
+              <div class="result-explanation" id="resultExplanation"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="options-container">
+          <button class="option-btn hoax-btn" id="hoaxBtn" onclick="checkAnswer(false)">
+            <i class="fas fa-times-circle"></i> Hoax
+          </button>
+          <button class="option-btn fact-btn" id="factBtn" onclick="checkAnswer(true)">
+            <i class="fas fa-check-circle"></i> Fakta
+          </button>
+        </div>
+      </div>
+      
+      <div class="result-container" id="resultContainer">
+        <div class="result-title">Hasil Permainan</div>
+        <div class="result-score" id="finalScore">0/10</div>
+        <div class="result-message" id="finalMessage"></div>
+        <button class="restart-btn" onclick="resetGame()">
+          <i class="fas fa-redo"></i> Main Lagi
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Media Pembelajaran Informatika | Dibuat oleh Anggi Clementine (237111039)</p>
+  </footer>
+
+  <!-- Audio elements for sound effects -->
+  <audio id="correctSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+  </audio>
+  <audio id="wrongSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+  </audio>
+
+  <script>
+    // Data pernyataan
+    const statements = [
+      {
+        text: "Semua informasi yang ada di internet itu sudah pasti benar.",
+        isFact: false,
+        explanation: "Tidak semua informasi di internet benar. Banyak informasi palsu atau hoax yang beredar."
+      },
+      {
+        text: "Kalau kita menerima pesan undian hadiah yang meminta data pribadi, itu biasanya penipuan.",
+        isFact: true,
+        explanation: "Undian hadiah yang meminta data pribadi atau biaya adalah modus penipuan yang umum."
+      },
+      {
+        text: "Foto pribadi yang sudah dihapus di media sosial pasti hilang selamanya.",
+        isFact: false,
+        explanation: "Foto yang dihapus mungkin masih tersimpan di server atau sudah diunduh oleh orang lain."
+      },
+      {
+        text: "Hoax sering dibuat untuk memanipulasi pikiran atau memancing emosi orang.",
+        isFact: true,
+        explanation: "Hoax sengaja dibuat untuk menyesatkan, memanipulasi opini, atau memancing emosi."
+      },
+      {
+        text: "Website yang alamatnya aneh atau penuh iklan mencurigakan kemungkinan tidak aman.",
+        isFact: true,
+        explanation: "Website dengan alamat mencurigakan atau iklan berlebihan seringkali tidak aman dan berpotensi scam."
+      },
+      {
+        text: "Berita yang dibagikan teman dekat sudah pasti benar dan boleh langsung disebarkan.",
+        isFact: false,
+        explanation: "Berita dari teman dekat pun perlu diverifikasi kebenarannya sebelum disebarkan."
+      },
+      {
+        text: "Deepfake adalah teknologi yang bisa memalsukan suara dan wajah orang.",
+        isFact: true,
+        explanation: "Deepfake adalah teknologi AI yang dapat membuat video atau audio palsu yang sangat mirip dengan aslinya."
+      },
+      {
+        text: "Kalau banyak yang share di WhatsApp berarti informasinya pasti asli.",
+        isFact: false,
+        explanation: "Banyaknya share tidak menjamin kebenaran informasi. Hoax seringkali viral di WhatsApp."
+      },
+      {
+        text: "Cek tanggal berita itu penting, karena bisa saja berita lama dibagikan lagi untuk menipu.",
+        isFact: true,
+        explanation: "Berita lama yang dibagikan kembali bisa menyesatkan karena konteksnya sudah tidak relevan."
+      },
+      {
+        text: "Kita boleh membully orang di internet kalau mereka salah.",
+        isFact: false,
+        explanation: "Bullying di internet (cyberbullying) adalah tindakan yang salah dan dapat melanggar hukum."
+      }
+    ];
+
+    // Variabel global
+    let currentStatement = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let isAnswered = false;
+    let gameCompleted = false;
+
+    // Fungsi untuk membuat partikel animasi
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 15;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 6 + 3;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 15}s`;
+        particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Fungsi untuk memulai game
+    function initGame() {
+      displayStatement();
+      updateProgressBar();
+      updateScore();
+      createParticles();
+    }
+
+    // Fungsi untuk menampilkan pernyataan
+    function displayStatement() {
+      const statement = statements[currentStatement];
+      document.getElementById('statementNumber').textContent = currentStatement + 1;
+      document.getElementById('statementText').textContent = statement.text;
+      
+      // Reset card state
+      const card = document.getElementById('statementCard');
+      card.classList.remove('flipped');
+      
+      // Reset button states
+      document.getElementById('hoaxBtn').disabled = false;
+      document.getElementById('factBtn').disabled = false;
+      
+      isAnswered = false;
+    }
+
+    // Fungsi untuk memeriksa jawaban
+    function checkAnswer(userAnswer) {
+      if (isAnswered) return;
+      
+      isAnswered = true;
+      const statement = statements[currentStatement];
+      const isCorrect = userAnswer === statement.isFact;
+      
+      // Disable buttons
+      document.getElementById('hoaxBtn').disabled = true;
+      document.getElementById('factBtn').disabled = true;
+      
+      // Update score
+      if (isCorrect) {
+        correctCount++;
+        playSound('correct');
+      } else {
+        wrongCount++;
+        playSound('wrong');
+      }
+      
+      updateScore();
+      
+      // Show result on card back
+      const cardBack = document.getElementById('cardBack');
+      const resultIcon = document.getElementById('resultIcon');
+      const resultText = document.getElementById('resultText');
+      const resultExplanation = document.getElementById('resultExplanation');
+      
+      if (isCorrect) {
+        cardBack.className = 'card-face card-back correct';
+        resultIcon.className = 'result-icon correct fas fa-check-circle';
+        resultText.textContent = 'Benar!';
+      } else {
+        cardBack.className = 'card-face card-back wrong';
+        resultIcon.className = 'result-icon wrong fas fa-times-circle';
+        resultText.textContent = 'Salah!';
+      }
+      
+      resultExplanation.textContent = statement.explanation;
+      
+      // Flip card to show result
+      setTimeout(() => {
+        document.getElementById('statementCard').classList.add('flipped');
+      }, 300);
+      
+      // Move to next statement after showing result
+      setTimeout(() => {
+        nextStatement();
+      }, 3000);
+    }
+
+    // Fungsi untuk berpindah ke pernyataan berikutnya
+    function nextStatement() {
+      currentStatement++;
+      
+      if (currentStatement < statements.length) {
+        displayStatement();
+        updateProgressBar();
+      } else {
+        showResult();
+      }
+    }
+
+    // Fungsi untuk memperbarui progress bar
+    function updateProgressBar() {
+      const progress = ((currentStatement + 1) / statements.length) * 100;
+      document.getElementById('progressBar').style.width = `${progress}%`;
+    }
+
+    // Fungsi untuk memperbarui skor
+    function updateScore() {
+      document.getElementById('correctScore').textContent = correctCount;
+      document.getElementById('wrongScore').textContent = wrongCount;
+    }
+
+    // Fungsi untuk memainkan suara
+    function playSound(type) {
+      const audio = document.getElementById(type + 'Sound');
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(e => console.error('Error playing sound:', e));
+      }
+    }
+
+    // Fungsi untuk menampilkan hasil akhir
+    function showResult() {
+      gameCompleted = true;
+      
+      // Hide game container and show result
+      document.getElementById('gameContainer').style.display = 'none';
+      document.getElementById('resultContainer').style.display = 'flex';
+      
+      // Display score
+      document.getElementById('finalScore').textContent = `${correctCount}/${statements.length}`;
+      
+      // Display message based on score
+      let message = '';
+      const percentage = (correctCount / statements.length) * 100;
+      
+      if (percentage >= 90) {
+        message = 'Luar biasa! Kamu sangat ahli dalam membedakan hoax dan fakta!';
+      } else if (percentage >= 70) {
+        message = 'Bagus! Kamu sudah cukup waspada terhadap informasi palsu.';
+      } else if (percentage >= 50) {
+        message = 'Cukup baik. Terus tingkatkan kemampuanmu dalam memverifikasi informasi.';
+      } else {
+        message = 'Perlu belajar lebih banyak. Selalu periksa kebenaran informasi sebelum membagikannya!';
+      }
+      
+      document.getElementById('finalMessage').textContent = message;
+    }
+
+    // Fungsi untuk mereset game
+    function resetGame() {
+      currentStatement = 0;
+      correctCount = 0;
+      wrongCount = 0;
+      isAnswered = false;
+      gameCompleted = false;
+      
+      // Show game container and hide result
+      document.getElementById('gameContainer').style.display = 'block';
+      document.getElementById('resultContainer').style.display = 'none';
+      
+      // Reinitialize game
+      initGame();
+    }
+
+    // Enhanced starfield animation
+    (function () {
+      const canvas = document.getElementById('stars');
+      const ctx = canvas.getContext('2d');
+
+      const STAR_COUNT = Math.floor((window.innerWidth * window.innerHeight) / 2000);
+      const MAX_RADIUS = 2;
+      const MIN_RADIUS = 0.4;
+      const TWINKLE_SPEED = 0.02;
+      const SHOOTING_STAR_CHANCE = 0.001;
+      const SHOOTING_STAR_SPEED = 15;
+
+      let stars = [];
+      let shootingStars = [];
+      let w = 0, h = 0, t = 0;
+
+      function rand(min, max) { return Math.random() * (max - min) + min; }
+
+      function makeStar() {
+        return {
+          x: Math.random(),
+          y: Math.random(),
+          r: rand(MIN_RADIUS, MAX_RADIUS),
+          baseAlpha: rand(0.4, 1.0),
+          twinklePhase: Math.random() * Math.PI * 2,
+          twinkleSpeed: rand(TWINKLE_SPEED * 0.5, TWINKLE_SPEED * 1.5)
+        };
+      }
+
+      function makeShootingStar() {
+        const angle = rand(0, Math.PI * 0.5);
+        return {
+          x: rand(0, 0.5),
+          y: rand(0, 0.5),
+          vx: Math.cos(angle) * SHOOTING_STAR_SPEED * 0.001,
+          vy: Math.sin(angle) * SHOOTING_STAR_SPEED * 0.001,
+          length: rand(0.05, 0.15),
+          alpha: 1.0
+        };
+      }
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+
+      function init() {
+        resize();
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          stars.push(makeStar());
+        }
+      }
+
+      function animate() {
+        t += 0.01;
+        ctx.fillStyle = 'rgba(17, 63, 103, 0.1)';
+        ctx.fillRect(0, 0, w, h);
+
+        stars.forEach(star => {
+          const twinkle = Math.sin(star.twinklePhase + t * star.twinkleSpeed) * 0.5 + 0.5;
+          const alpha = star.baseAlpha * twinkle;
+          
+          ctx.beginPath();
+          ctx.arc(star.x * w, star.y * h, star.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+        });
+
+        if (Math.random() < SHOOTING_STAR_CHANCE) {
+          shootingStars.push(makeShootingStar());
+        }
+
+        shootingStars = shootingStars.filter(star => {
+          star.x += star.vx;
+          star.y += star.vy;
+          star.alpha -= 0.01;
+
+          if (star.alpha <= 0) return false;
+
+          const gradient = ctx.createLinearGradient(
+            star.x * w, star.y * h,
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${star.alpha})`);
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(star.x * w, star.y * h);
+          ctx.lineTo(
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          ctx.stroke();
+
+          return true;
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', init);
+      init();
+      animate();
+    })();
+
+    // Initialize game when page loads
+    window.onload = initGame;
+  </script>
+</body>
+</html>

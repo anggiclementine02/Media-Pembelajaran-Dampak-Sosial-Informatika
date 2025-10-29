@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teka-Teki Silang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #113F67;
+            color: #1c1c1c;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        canvas#stars {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 0;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(253, 245, 170, 0.03), transparent 50%);
+        }
+
+        /* === MODERN HEADER === */
+        header {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        header h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            font-size: 0.95em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        nav a.active {
+            color: #113F67;
+            background: #FDF5AA;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(253, 245, 170, 0.3);
+        }
+    .home-btn {
+      background: rgba(253, 245, 170, 0.2);
+      color: #ffffff;
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .home-btn:hover {
+      background: rgba(253, 245, 170, 0.3);
+      border-color: rgba(253, 245, 170, 0.5);
+      transform: translateY(-2px);
+    }
+        /* === FLOATING NAV BUTTONS === */
+        .nav-buttons {
+            position: fixed;
+            bottom: 390px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1000px;
+            z-index: 50;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 500;
+            padding: 14px 30px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn:hover {
+            background: rgba(253, 245, 170, 0.2);
+            border-color: rgba(253, 245, 170, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(253, 245, 170, 0.2);
+        }
+
+        /* === CONTENT SECTION === */
+        .content {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(253, 245, 170, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(253, 245, 170, 0.3);
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: #FDF5AA;
+            font-size: 1.2em;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 3em;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+        }
+
+        .section-header .gradient-text {
+            background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 50%, #FDF5AA 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .section-header p {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* === PUZZLE CONTAINER === */
+        .container {
+            background: rgba(40, 65, 109, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            max-width: 1200px;
+            width: 100%;
+            animation: fadeInScale 1s ease-out 0.3s both;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(253, 245, 170, 0.08) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        table { 
+            border-collapse: collapse; 
+            border-spacing: 0; 
+            max-width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        table tr{
+            width: 100%;
+        }
+        
+        table td {
+            width: 2.5em;
+            height: 2.5em;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 0;
+            margin: 0;
+            background-color: rgba(17, 63, 103, 0.6);
+            position: relative;
+        }
+                
+        td input {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            border: none;
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+        }
+        
+        td input:focus {
+            background-color: rgba(253, 245, 170, 0.3);
+            outline: 2px solid #FDF5AA;
+        }
+        
+        td span {
+            color: #FDF5AA;
+            font-size: 0.7em;
+            font-weight: bold;
+            position: absolute;
+            top: 1px;
+            left: 2px;
+        }
+        
+        input.done {
+            font-weight: bold;
+            color: #ffff;
+            background-color: rgba(60, 181, 121, 0.2);
+        }
+        
+        .active {
+            background-color: rgba(253, 245, 170, 0.2) !important;
+        }
+        
+        .clues-active {
+            background-color: rgba(60, 181, 121, 0.2);
+            font-weight: bold;
+        }
+        
+        .clue-done {
+            color: rgba(60, 181, 121, 0.2);
+            text-decoration: line-through;
+        }
+        
+        #puzzle-wrapper {
+            float: left;
+            width: 58%;
+            margin-right: 2%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        #puzzle-clues {
+            float: left;
+            width: 38%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        #puzzle-clues h2 {
+            color: #FDF5AA;
+            font-size: 1.8em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #FDF5AA;
+            padding-bottom: 5px;
+        }
+        
+        #puzzle-clues ol {
+            padding-left: 25px;
+        }
+        
+        #puzzle-clues li{
+            font-size: 1.1em;
+            margin: 8px 0;
+            line-height: 1.6em;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        #puzzle-clues li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* === FLOATING PARTICLES === */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(253, 245, 170, 0.8), transparent);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) translateX(20px) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(100px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* === FOOTER === */
+        footer {
+            background: rgba(253, 245, 170, 0.95);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            padding: 30px;
+            color: #113F67;
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid rgba(17, 63, 103, 0.1);
+        }
+
+        footer p {
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1024px) {
+            #puzzle-wrapper, #puzzle-clues {
+                float: none;
+                width: 100%;
+            }
+            
+            #puzzle-wrapper {
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px 25px;
+                gap: 15px;
+            }
+
+            header h1 {
+                font-size: 1.3em;
+            }
+
+            nav {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            nav a {
+                padding: 8px 15px;
+                font-size: 0.85em;
+            }
+
+            .content {
+                padding: 30px 20px 80px;
+            }
+
+            .section-header {
+                margin-bottom: 40px;
+            }
+
+            .section-header h2 {
+                font-size: 2em;
+            }
+
+            .section-header p {
+                font-size: 1em;
+            }
+
+            .container {
+                padding: 30px;
+            }
+
+            table td {
+                width: 2em;
+                height: 2em;
+            }
+            
+            td input {
+                font-size: 1.5em;
+            }
+
+            .nav-buttons {
+                bottom: 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                padding: 12px 24px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section-header h2 {
+                font-size: 1.8em;
+            }
+
+            .section-badge {
+                font-size: 0.8em;
+                padding: 8px 16px;
+            }
+
+            .container {
+                padding: 25px;
+            }
+
+            #puzzle-clues h2 {
+                font-size: 1.5em;
+            }
+
+            #puzzle-clues li {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="stars" aria-hidden="true"></canvas>
+    <div class="overlay"></div>
+    <div class="particles" id="particles"></div>
+
+    <header>
+        <h1>Crossword</h1>
+        <a href="index.html" class="home-btn">
+      <i class="fas fa-home"></i> Kembali ke Beranda
+    </a>
+    </header>
+
+    <div class="nav-buttons">
+        <a href="Materi.html" class="nav-btn">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <a href="Tugas.html" class="nav-btn">
+            Next <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <section class="content">
+        <div class="section-header">
+            <div class="section-badge">
+                <i class="fas fa-gamepad"></i>
+                <span>Game Interaktif</span>
+            </div>
+            
+            <h2 class="gradient-text">Teka Teki Silang</h2>
+            <p>Uji pengetahuanmu tentang materi Dampak Sosial Informatika dengan teka-teki silang interaktif ini!</p>
+        </div>
+
+        <div class="container clearfix">
+            <div id="puzzle-wrapper"></div>
+            <div id="puzzle-clues">
+                <h2>➡️ Mendatar</h2>
+                <ol id="across"></ol>
+                <h2>⬇️ Menurun</h2>
+                <ol id="down"></ol>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 Media Pembelajaran Informatika | Dibuat oleh Anggi Clementine (237111039)</p>
+    </footer>
+
+    <script>
+    // Create floating particles
+    function createParticles() {
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 15;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            const size = Math.random() * 6 + 3;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.animationDelay = `${Math.random() * 15}s`;
+            particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+            
+            particlesContainer.appendChild(particle);
+        }
+    }
+    
+    createParticles();
+    
+    // Enhanced starfield animation
+    (function () {
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+
+        const STAR_COUNT = Math.floor((window.innerWidth * window.innerHeight) / 2000);
+        const MAX_RADIUS = 2;
+        const MIN_RADIUS = 0.4;
+        const TWINKLE_SPEED = 0.02;
+        const SHOOTING_STAR_CHANCE = 0.001;
+        const SHOOTING_STAR_SPEED = 15;
+
+        let stars = [];
+        let shootingStars = [];
+        let w = 0, h = 0, t = 0;
+
+        function rand(min, max) { return Math.random() * (max - min) + min; }
+
+        function makeStar() {
+            return {
+                x: Math.random(),
+                y: Math.random(),
+                r: rand(MIN_RADIUS, MAX_RADIUS),
+                baseAlpha: rand(0.4, 1.0),
+                twinklePhase: Math.random() * Math.PI * 2,
+                twinkleSpeed: rand(TWINKLE_SPEED * 0.5, TWINKLE_SPEED * 1.5)
+            };
+        }
+
+        function makeShootingStar() {
+            const angle = rand(0, Math.PI * 0.5);
+            return {
+                x: rand(0, 0.5),
+                y: rand(0, 0.5),
+                vx: Math.cos(angle) * SHOOTING_STAR_SPEED * 0.001,
+                vy: Math.sin(angle) * SHOOTING_STAR_SPEED * 0.001,
+                length: rand(0.05, 0.15),
+                alpha: 1.0
+            };
+        }
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+
+        function init() {
+            resize();
+            stars = [];
+            for (let i = 0; i < STAR_COUNT; i++) {
+                stars.push(makeStar());
+            }
+        }
+
+        function animate() {
+            t += 0.01;
+            ctx.fillStyle = 'rgba(17, 63, 103, 0.1)';
+            ctx.fillRect(0, 0, w, h);
+
+            stars.forEach(star => {
+                const twinkle = Math.sin(star.twinklePhase + t * star.twinkleSpeed) * 0.5 + 0.5;
+                const alpha = star.baseAlpha * twinkle;
+                
+                ctx.beginPath();
+                ctx.arc(star.x * w, star.y * h, star.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.fill();
+            });
+
+            if (Math.random() < SHOOTING_STAR_CHANCE) {
+                shootingStars.push(makeShootingStar());
+            }
+
+            shootingStars = shootingStars.filter(star => {
+                star.x += star.vx;
+                star.y += star.vy;
+                star.alpha -= 0.01;
+
+                if (star.alpha <= 0) return false;
+
+                const gradient = ctx.createLinearGradient(
+                    star.x * w, star.y * h,
+                    (star.x - star.vx * star.length * 100) * w,
+                    (star.y - star.vy * star.length * 100) * h
+                );
+                gradient.addColorStop(0, `rgba(255, 255, 255, ${star.alpha})`);
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(star.x * w, star.y * h);
+                ctx.lineTo(
+                    (star.x - star.vx * star.length * 100) * w,
+                    (star.y - star.vy * star.length * 100) * h
+                );
+                ctx.stroke();
+
+                return true;
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        animate();
+    })();
+
+    (function($){
+        $.fn.crossword = function(entryData) {
+                var puzz = {};
+                puzz.data = entryData;
+                
+                var tbl = ['<table id="puzzle">'],
+                    puzzEl = this,
+                    clues = $('#puzzle-clues'),
+                    clueLiEls,
+                    coords,
+                    entryCount = puzz.data.length,
+                    entries = [], 
+                    rows = [],
+                    cols = [],
+                    solved = [],
+                    tabindex,
+                    $actives,
+                    activePosition = 0,
+                    activeClueIndex = 0,
+                    currOri,
+                    targetInput,
+                    mode = 'interacting',
+                    solvedToggle = false,
+                    z = 0;
+
+                var puzInit = {
+                    
+                    init: function() {
+                        currOri = 'across';
+                        
+                        puzz.data.sort(function(a,b) {
+                            return a.position - b.position;
+                        });
+
+                        puzzEl.delegate('input', 'keyup', function(e){
+                            mode = 'interacting';
+                            
+                            switch(e.which) {
+                                case 39:
+                                case 37:
+                                    currOri = 'across';
+                                    break;
+                                case 38:
+                                case 40:
+                                    currOri = 'down';
+                                    break;
+                                default:
+                                    break;
+                            }
+                            
+                            if ( e.keyCode === 9) {
+                                return false;
+                            } else if (
+                                e.keyCode === 37 ||
+                                e.keyCode === 38 ||
+                                e.keyCode === 39 ||
+                                e.keyCode === 40 ||
+                                e.keyCode === 8 ||
+                                e.keyCode === 46 ) {
+                                
+                                if (e.keyCode === 8 || e.keyCode === 46) {
+                                    currOri === 'across' ? nav.nextPrevNav(e, 37) : nav.nextPrevNav(e, 38); 
+                                } else {
+                                    nav.nextPrevNav(e);
+                                }
+                                
+                                e.preventDefault();
+                                return false;
+                            } else {
+                                puzInit.checkAnswer(e);
+                            }
+
+                            e.preventDefault();
+                            return false;                   
+                        });
+                
+                        puzzEl.delegate('input', 'keydown', function(e) {
+                            if ( e.keyCode === 9) {
+                                mode = "setting ui";
+                                if (solvedToggle) solvedToggle = false;
+                                nav.updateByEntry(e);
+                            } else {
+                                return true;
+                            }
+                            e.preventDefault();
+                        });
+                        
+                        puzzEl.delegate('input', 'click', function(e) {
+                            mode = "setting ui";
+                            if (solvedToggle) solvedToggle = false;
+                            nav.updateByEntry(e);
+                            e.preventDefault();
+                        });
+                        
+                        clues.delegate('li', 'click', function(e) {
+                            mode = 'setting ui';
+                            if (!e.keyCode) {
+                                nav.updateByNav(e);
+                            } 
+                            e.preventDefault(); 
+                        });
+                        
+                        puzzEl.delegate('#puzzle', 'click', function(e) {
+                            $(e.target).focus();
+                            $(e.target).select();
+                        });
+                        
+                        puzInit.calcCoords();
+                        clueLiEls = $('#puzzle-clues li');
+                        $('#' + currOri + ' li' ).eq(0).addClass('clues-active').focus();
+                        puzInit.buildTable();
+                        puzInit.buildEntries();
+                    },
+                    
+                    calcCoords: function() {
+                        for (var i = 0, p = entryCount; i < p; ++i) {
+                            entries.push(i);
+                            entries[i] = [];
+
+                            for (var x=0, j = puzz.data[i].answer.length; x < j; ++x) {
+                                entries[i].push(x);
+                                coords = puzz.data[i].orientation === 'across' ? "" + puzz.data[i].startx++ + "," + puzz.data[i].starty + "" : "" + puzz.data[i].startx + "," + puzz.data[i].starty++ + "" ;
+                                entries[i][x] = coords; 
+                            }
+
+                            $('#' + puzz.data[i].orientation).append('<li tabindex="1" data-position="' + i + '">' + puzz.data[i].clue + '</li>'); 
+                        }               
+                        
+                        for (var i = 0, p = entryCount; i < p; ++i) {
+                            for (var x=0; x < entries[i].length; x++) {
+                                cols.push(entries[i][x].split(',')[0]);
+                                rows.push(entries[i][x].split(',')[1]);
+                            };
+                        }
+
+                        rows = Math.max.apply(Math, rows) + "";
+                        cols = Math.max.apply(Math, cols) + "";
+                    },
+                    
+                    buildTable: function() {
+                        for (var i=1; i <= rows; ++i) {
+                            tbl.push("<tr>");
+                                for (var x=1; x <= cols; ++x) {
+                                    tbl.push('<td data-coords="' + x + ',' + i + '"></td>');        
+                                };
+                            tbl.push("</tr>");
+                        };
+
+                        tbl.push("</table>");
+                        puzzEl.append(tbl.join(''));
+                    },
+                    
+                    buildEntries: function() {
+                        var puzzCells = $('#puzzle td'),
+                            light,
+                            $groupedLights,
+                            hasOffset = false,
+                            positionOffset = entryCount - puzz.data[puzz.data.length-1].position;
+                            
+                        for (var x=1, p = entryCount; x <= p; ++x) {
+                            var letters = puzz.data[x-1].answer.split('');
+
+                            for (var i=0; i < entries[x-1].length; ++i) {
+                                light = $(puzzCells +'[data-coords="' + entries[x-1][i] + '"]');
+                                
+                                if(x > 1 ){
+                                    if (puzz.data[x-1].position === puzz.data[x-2].position) {
+                                        hasOffset = true;
+                                    };
+                                }
+                                
+                                if($(light).empty()){
+                                    $(light)
+                                        .addClass('entry-' + (hasOffset ? x - positionOffset : x) + ' position-' + (x-1) )
+                                        .append('<input maxlength="1" val="" type="text" tabindex="-1" />');
+                                }
+                            };
+                        };  
+                        
+                        for (var i=1, p = entryCount; i < p; ++i) {
+                            $groupedLights = $('.entry-' + i);
+                            if(!$('.entry-' + i +':eq(0) span').length){
+                                $groupedLights.eq(0)
+                                    .append('<span>' + puzz.data[i].position + '</span>');
+                            }
+                        }   
+                        
+                        util.highlightEntry();
+                        util.highlightClue();
+                        $('.active').eq(0).focus();
+                        $('.active').eq(0).select();
+                    },
+                    
+                    checkAnswer: function(e) {
+                        var valToCheck, currVal;
+                        util.getActivePositionFromClassGroup($(e.target));
+                        valToCheck = puzz.data[activePosition].answer.toLowerCase();
+
+                        currVal = $('.position-' + activePosition + ' input')
+                            .map(function() {
+                                return $(this).val().toLowerCase();
+                            })
+                            .get()
+                            .join('');
+                        
+                        if(valToCheck === currVal){ 
+                            $('.active')
+                                .addClass('done')
+                                .removeClass('active');
+                            $('.clues-active').addClass('clue-done');
+                            solved.push(valToCheck);
+                            solvedToggle = true;
+                            return;
+                        }
+                        
+                        currOri === 'across' ? nav.nextPrevNav(e, 39) : nav.nextPrevNav(e, 40);
+                    }
+                };
+
+                var nav = {
+                    nextPrevNav: function(e, override) {
+                        var len = $actives.length,
+                            struck = override ? override : e.which,
+                            el = $(e.target),
+                            p = el.parent(),
+                            ps = el.parents(),
+                            selector;
+                    
+                        util.getActivePositionFromClassGroup(el);
+                        util.highlightEntry();
+                        util.highlightClue();
+                        
+                        $('.current').removeClass('current');
+                        selector = '.position-' + activePosition + ' input';
+                            
+                        switch(struck) {
+                            case 39:
+                                p.next().find('input').addClass('current').select();
+                                break;
+                            case 37:
+                                p.prev().find('input').addClass('current').select();
+                                break;
+                            case 40:
+                                ps.next('tr').find(selector).addClass('current').select();
+                                break;
+                            case 38:
+                                ps.prev('tr').find(selector).addClass('current').select();
+                                break;
+                            default:
+                            break;
+                        }
+                    },
+        
+                    updateByNav: function(e) {
+                        var target;
+                        $('.clues-active').removeClass('clues-active');
+                        $('.active').removeClass('active');
+                        $('.current').removeClass('current');
+                        currIndex = 0;
+
+                        target = e.target;
+                        activePosition = $(e.target).data('position');
+                        
+                        util.highlightEntry();
+                        util.highlightClue();
+                        $('.active').eq(0).focus();
+                        $('.active').eq(0).select();
+                        $('.active').eq(0).addClass('current');
+                        currOri = $('.clues-active').parent('ol').prop('id');
+                        activeClueIndex = $(clueLiEls).index(e.target);
+                    },
+                
+                    updateByEntry: function(e, next) {
+                        var classes, next, clue, e1Ori, e2Ori, e1Cell, e2Cell;
+                        
+                        if(e.keyCode === 9 || next){
+                            activeClueIndex = activeClueIndex === clueLiEls.length-1 ? 0 : ++activeClueIndex;
+                            $('.clues-active').removeClass('.clues-active');
+                            next = $(clueLiEls[activeClueIndex]);
+                            currOri = next.parent().prop('id');
+                            activePosition = $(next).data('position');
+                            util.getSkips(activeClueIndex);
+                            activePosition = $(clueLiEls[activeClueIndex]).data('position');
+                        } else {
+                            activeClueIndex = activeClueIndex === clueLiEls.length-1 ? 0 : ++activeClueIndex;
+                            util.getActivePositionFromClassGroup(e.target);
+                            clue = $(clueLiEls + '[data-position=' + activePosition + ']');
+                            activeClueIndex = $(clueLiEls).index(clue);
+                            currOri = clue.parent().prop('id');
+                        }
+                            
+                        util.highlightEntry();
+                        util.highlightClue();
+                    }
+                };
+
+                var util = {
+                    highlightEntry: function() {
+                        $actives = $('.active');
+                        $actives.removeClass('active');
+                        $actives = $('.position-' + activePosition + ' input').addClass('active');
+                        $actives.eq(0).focus();
+                        $actives.eq(0).select();
+                    },
+                    
+                    highlightClue: function() {
+                        var clue;               
+                        $('.clues-active').removeClass('clues-active');
+                        $(clueLiEls + '[data-position=' + activePosition + ']').addClass('clues-active');
+                        
+                        if (mode === 'interacting') {
+                            clue = $(clueLiEls + '[data-position=' + activePosition + ']');
+                            activeClueIndex = $(clueLiEls).index(clue);
+                        };
+                    },
+                    
+                    getClasses: function(light, type) {
+                        if (!light.length) return false;
+                        
+                        var classes = $(light).prop('class').split(' '),
+                        classLen = classes.length,
+                        positions = []; 
+
+                        for(var i=0; i < classLen; ++i){
+                            if (!classes[i].indexOf(type) ) {
+                                positions.push(classes[i]);
+                            }
+                        }
+                        return positions;
+                    },
+
+                    getActivePositionFromClassGroup: function(el){
+                        classes = util.getClasses($(el).parent(), 'position');
+
+                        if(classes.length > 1){
+                            e1Ori = $(clueLiEls + '[data-position=' + classes[0].split('-')[1] + ']').parent().prop('id');
+                            e2Ori = $(clueLiEls + '[data-position=' + classes[1].split('-')[1] + ']').parent().prop('id');
+                            e1Cell = $('.position-' + classes[0].split('-')[1] + ' input').index(el);
+                            e2Cell = $('.position-' + classes[1].split('-')[1] + ' input').index(el);
+
+                            if(mode === "setting ui"){
+                                currOri = e1Cell === 0 ? e1Ori : e2Ori;
+                            }
+
+                            if(e1Ori === currOri){
+                                activePosition = classes[0].split('-')[1];      
+                            } else if(e2Ori === currOri){
+                                activePosition = classes[1].split('-')[1];
+                            }
+                        } else {
+                            activePosition = classes[0].split('-')[1];                      
+                        }
+                    },
+                    
+                    checkSolved: function(valToCheck) {
+                        for (var i=0, s=solved.length; i < s; i++) {
+                            if(valToCheck === solved[i]){
+                                return true;
+                            }
+                        }
+                    },
+                    
+                    getSkips: function(position) {
+                        if ($(clueLiEls[position]).hasClass('clue-done')){
+                            activeClueIndex = position === clueLiEls.length-1 ? 0 : ++activeClueIndex;
+                            util.getSkips(activeClueIndex);                     
+                        } else {
+                            return false;
+                        }
+                    }
+                };
+
+                puzInit.init();
+        }
+    })(jQuery);
+
+    (function($) {
+        $(function() {
+            var puzzleData = [
+                // Mendatar
+                {
+                    clue: "Tempat berdiskusi secara online dalam komunitas tertentu",
+                    answer: "forum",
+                    position: 1,
+                    orientation: "across",
+                    startx: 1,
+                    starty: 3
+                },
+                {
+                    clue: "Komunikasi dua arah antara pengguna di media sosial",
+                    answer: "interaksi",
+                    position: 2,
+                    orientation: "across",
+                    startx: 4,
+                    starty: 5
+                },
+                {
+                    clue: "Informasi yang benar dan dapat dibuktikan kevalidannya",
+                    answer: "fakta",
+                    position: 3,
+                    orientation: "across",
+                    startx: 1,
+                    starty: 7
+                },
+                {
+                    clue: "Segala bentuk informasi yang dipublikasikan di media sosial",
+                    answer: "konten",
+                    position: 4,
+                    orientation: "across",
+                    startx: 12,
+                    starty: 8
+                },
+                {
+                    clue: "Perundungan di dunia maya menggunakan media digital",
+                    answer: "cyberbullying",
+                    position: 5,
+                    orientation: "across",
+                    startx: 2,
+                    starty: 11
+                },
+                {
+                    clue: "Platform berbasis internet untuk berbagi informasi dan berkomunikasi",
+                    answer: "mediasosial",
+                    position: 6,
+                    orientation: "across",
+                    startx: 1,
+                    starty: 13
+                },
+                {
+                    clue: "Dapat dipercaya; sumber informasi yang valid dan bertanggung jawab",
+                    answer: "kredibel",
+                    position: 7,
+                    orientation: "across",
+                    startx: 1,
+                    starty: 16
+                },
+                {
+                    clue: "Unggahan yang dibuat pengguna di platform digital",
+                    answer: "postingan",
+                    position: 8,
+                    orientation: "across",
+                    startx: 2,
+                    starty: 19
+                },
+                {
+                    clue: "Situs untuk menulis dan mempublikasikan artikel secara daring",
+                    answer: "blog",
+                    position: 9,
+                    orientation: "across",
+                    startx: 4,
+                    starty: 21
+                },
+                // Menurun
+                {
+                    clue: "Tanggapan pengguna terhadap unggahan orang lain",
+                    answer: "komentar",
+                    position: 1,
+                    orientation: "down",
+                    startx: 5,
+                    starty: 1
+                },
+                {
+                    clue: "Berita Bohong, fake news",
+                    answer: "hoax",
+                    position: 2,
+                    orientation: "down",
+                    startx: 2,
+                    starty: 2
+                },
+                {
+                    clue: "Pengaturan untuk melindungi data dan aktivitas pribadi online",
+                    answer: "privasi",
+                    position: 3,
+                    orientation: "down",
+                    startx: 9,
+                    starty: 1
+                },
+                {
+                    clue: "Fitur pelaporan terhadap konten yang berbahaya/menyimpang",
+                    answer: "report",
+                    position: 4,
+                    orientation: "down",
+                    startx: 7,
+                    starty: 4
+                },
+                {
+                    clue: "Rekaman aktivitas online yang dapat ditelusuri kembali",
+                    answer: "jejakdigital",
+                    position: 5,
+                    orientation: "down",
+                    startx: 5,
+                    starty: 10
+                },
+                {
+                    clue: "Proses mengecek kebenaran informasi agar tidak tertipu berita bohong",
+                    answer: "verifikasi",
+                    position: 6,
+                    orientation: "down",
+                    startx: 12,
+                    starty: 2
+                },
+                {
+                    clue: "Identitas pengguna di media sosial untuk login dan interaksi",
+                    answer: "akun",
+                    position: 7,
+                    orientation: "down",
+                    startx: 1,
+                    starty: 15
+                }
+            ] 
+        
+            $('#puzzle-wrapper').crossword(puzzleData);
+        })
+    })(jQuery)
+    </script>
+</body>
+</html>

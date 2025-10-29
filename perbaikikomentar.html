@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perbaiki Komentar - Game Interaktif</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #113F67;
+      color: #1c1c1c;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+    canvas#stars {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(253, 245, 170, 0.03), transparent 50%);
+    }
+
+    /* === MODERN HEADER === */
+    header {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    header h1 {
+      font-size: 1.8em;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+    .home-btn {
+      background: rgba(253, 245, 170, 0.2);
+      color: #ffffff;
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .home-btn:hover {
+      background: rgba(253, 245, 170, 0.3);
+      border-color: rgba(253, 245, 170, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* === FLOATING NAV BUTTONS === */
+    .nav-buttons {
+      position: fixed;
+      bottom: 390px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1000px;
+      z-index: 50;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 500;
+      padding: 14px 30px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn:hover {
+      background: rgba(253, 245, 170, 0.2);
+      border-color: rgba(253, 245, 170, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.2);
+    }
+
+    /* === CONTENT SECTION === */
+    .content {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px 100px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(253, 245, 170, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      padding: 10px 20px;
+      border-radius: 50px;
+      color: #FDF5AA;
+      font-size: 1.2em;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-size: 3em;
+      font-weight: 800;
+      line-height: 1.1;
+      color: #ffffff;
+      margin-bottom: 15px;
+      letter-spacing: -2px;
+    }
+
+    .section-header .gradient-text {
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 50%, #FDF5AA 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .section-header p {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* === GAME CONTAINER === */
+    .game-container {
+      background: rgba(40, 65, 109, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 30px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      max-width: 1200px;
+      width: 100%;
+      animation: fadeInScale 1s ease-out 0.3s both;
+      display: none; /* Hidden by default */
+    }
+
+    .game-container.active {
+      display: block;
+    }
+
+    .game-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.08) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .game-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+    }
+
+    .score-icon {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+    }
+
+    .question-icon {
+      background: rgba(33, 150, 243, 0.2);
+      color: #2196F3;
+    }
+
+    .time-icon {
+      background: rgba(255, 152, 0, 0.2);
+      color: #FF9800;
+    }
+
+    .stat-text {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #FDF5AA;
+    }
+
+    /* === PROGRESS BAR === */
+    .progress-container {
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FDF5AA, #ffffff);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    .progress-text {
+      text-align: center;
+      margin-top: 10px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9em;
+    }
+
+    /* === TIPS CONTAINER === */
+    .tips-container {
+      background: rgba(108, 99, 255, 0.1);
+      border-left: 4px solid rgba(108, 99, 255, 0.5);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tips-title {
+      font-weight: 600;
+      color: #FDF5AA;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1em;
+    }
+
+    .tips-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .tips-list li {
+      margin-bottom: 10px;
+      position: relative;
+      padding-left: 25px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95em;
+    }
+
+    .tips-list li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #FDF5AA;
+      font-weight: bold;
+    }
+
+    /* === COMMENT CARD === */
+    .comment-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .comment-number {
+      background: rgba(253, 245, 170, 0.2);
+      color: #FDF5AA;
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 0.9em;
+      font-weight: 600;
+    }
+
+    .comment-label {
+      font-weight: 600;
+      color: #ff6b6b;
+      font-size: 1.1em;
+    }
+
+    .situation-container {
+      background: #ffff;
+      border-left: 4px solid rgba(255, 152, 0, 0.5);
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    .situation-title {
+      font-weight: 600;
+      color: #FF9800;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1em;
+    }
+
+    .situation-text {
+      color: #333;
+      font-size: 0.95em;
+    }
+
+    .comment-text {
+      font-size: 1.2em;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 15px;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+    }
+
+    .comment-text::before {
+      content: '"';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 3em;
+      color: rgba(255, 107, 107, 0.3);
+    }
+
+    /* === RESPONSE SECTION === */
+    .response-section {
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .response-label {
+      display: block;
+      margin-bottom: 15px;
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 1.1em;
+    }
+
+    .response-input {
+      width: 100%;
+      min-height: 150px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1em;
+      color: #ffffff;
+      resize: vertical;
+      transition: all 0.3s ease;
+    }
+
+    .response-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .response-input:focus {
+      outline: none;
+      border-color: rgba(253, 245, 170, 0.5);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 3px rgba(253, 245, 170, 0.1);
+    }
+
+    .character-count {
+      text-align: right;
+      font-size: 0.9em;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 10px;
+    }
+
+    /* === BUTTONS === */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      color: #113F67;
+      padding: 16px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 30px rgba(253, 245, 170, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.5);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* === RESULT CONTAINER === */
+    .result-container {
+      display: none;
+      background: rgba(40, 65, 109, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 30px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      max-width: 1200px;
+      width: 100%;
+      margin-bottom: 30px;
+      animation: fadeInScale 0.5s ease-out;
+    }
+
+    .result-container.active {
+      display: block;
+    }
+
+    .result-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.08) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .result-title {
+      font-size: 2em;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .result-score {
+      font-size: 1.5em;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 50px;
+    }
+
+    .score-excellent {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+    }
+
+    .score-good {
+      background: rgba(255, 152, 0, 0.2);
+      color: #FF9800;
+    }
+
+    .score-poor {
+      background: rgba(244, 67, 54, 0.2);
+      color: #f44336;
+    }
+
+    .result-feedback {
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feedback-item {
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 15px;
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .feedback-positive {
+      background: rgba(76, 175, 80, 0.1);
+      border-left: 4px solid #4CAF50;
+    }
+
+    .feedback-negative {
+      background: rgba(244, 67, 54, 0.1);
+      border-left: 4px solid #f44336;
+    }
+
+    .feedback-suggestion {
+      background: rgba(255, 152, 0, 0.1);
+      border-left: 4px solid #FF9800;
+    }
+
+    .feedback-icon {
+      font-size: 1.2em;
+      margin-top: 2px;
+    }
+
+    .feedback-text {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95em;
+    }
+
+    .comparison-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .comparison-box {
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .user-response {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .model-response {
+      background: rgba(253, 245, 170, 0.1);
+      border: 1px solid rgba(253, 245, 170, 0.2);
+    }
+
+    .comparison-title {
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #ffffff;
+    }
+
+    .comparison-text {
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.9);
+      font-style: italic;
+      min-height: 80px;
+    }
+
+    /* === GAME COMPLETE === */
+    .game-complete {
+      display: none;
+      text-align: center;
+      padding: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .game-complete.active {
+      display: block;
+    }
+
+    .game-complete h2 {
+      font-size: 2.5em;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+
+    .final-score {
+      font-size: 4em;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 20px 0;
+    }
+
+    .final-message {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 30px;
+    }
+
+    .achievement {
+      display: flex;
+      justify-content: center;
+      margin: 30px 0;
+    }
+
+    .achievement-badge {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4em;
+      box-shadow: 0 10px 30px rgba(253, 245, 170, 0.4);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* === MODAL === */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content {
+      background: rgba(40, 65, 109, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      animation: scaleIn 0.3s ease-out;
+    }
+
+    @keyframes scaleIn {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: rgba(253, 245, 170, 0.2);
+      transform: rotate(90deg);
+    }
+
+    /* === FOOTER === */
+    footer {
+      background: rgba(253, 245, 170, 0.95);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 30px;
+      color: #113F67;
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(17, 63, 103, 0.1);
+    }
+
+    footer p {
+      font-weight: 500;
+      font-size: 0.95em;
+    }
+    
+    /* === START SCREEN === */
+    .start-screen {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      display: block; /* Shown by default */
+    }
+
+    .start-screen.hidden {
+      display: none;
+    }
+
+    .start-screen h2 {
+      color: #FDF5AA;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .start-screen-content {
+      background: rgba(40, 65, 109, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 30px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 30px;
+      margin-top: -80px;
+    }
+
+    .start-screen-content::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.08) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    .start-screen-content-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .start-screen p {
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1.2em;
+    }
+
+    .warning-box {
+      background: rgba(255, 87, 51, 0.15);
+      border-left: 4px solid rgba(255, 87, 51, 0.7);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 30px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .warning-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #FF5733;
+      font-weight: 600;
+      font-size: 1.2em;
+      margin-bottom: 15px;
+    }
+
+    .warning-content {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    .start-btn {
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      color: #113F67;
+      padding: 16px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.2em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 30px rgba(253, 245, 170, 0.3);
+      border: none;
+      cursor: pointer;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 8px 30px rgba(253, 245, 170, 0.3); }
+      50% { box-shadow: 0 8px 40px rgba(253, 245, 170, 0.5); }
+      100% { box-shadow: 0 8px 30px rgba(253, 245, 170, 0.3); }
+    }
+
+    .start-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.5);
+    }
+
+    /* Feature List */
+    .feature-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      width: 250px;
+      text-align: left;
+    }
+
+    .feature-icon {
+      background: rgba(253, 245, 170, 0.2);
+      color: #FDF5AA;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      flex-shrink: 0;
+    }
+
+    .feature-text h4 {
+      color: #ffffff;
+      font-size: 1.1em;
+      margin-bottom: 5px;
+    }
+
+    .feature-text p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9em;
+      margin: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .start-screen h2 {
+        font-size: 2em;
+      }
+      
+      .start-screen-content {
+        padding: 30px 20px;
+      }
+      
+      .feature-list {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    /* === FLOATING PARTICLES === */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.8), transparent);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+        transform: translateY(90vh) translateX(20px) scale(1);
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) translateX(100px) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 1024px) {
+      .comparison-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        padding: 15px 25px;
+        gap: 15px;
+      }
+
+      header h1 {
+        font-size: 1.3em;
+      }
+
+      .content {
+        padding: 30px 20px 80px;
+      }
+
+      .section-header {
+        margin-bottom: 40px;
+      }
+
+      .section-header h2 {
+        font-size: 2em;
+      }
+
+      .section-header p {
+        font-size: 1em;
+      }
+
+      .game-container {
+        padding: 30px;
+      }
+
+      .nav-buttons {
+        bottom: 20px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        padding: 12px 24px;
+        font-size: 0.9em;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section-header h2 {
+        font-size: 1.8em;
+      }
+
+      .section-badge {
+        font-size: 0.8em;
+        padding: 8px 16px;
+      }
+
+      .game-container {
+        padding: 25px;
+      }
+
+      .comment-card {
+        padding: 20px;
+      }
+
+      .comment-text {
+        font-size: 1em;
+        padding: 15px;
+      }
+
+      .response-input {
+        min-height: 120px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="overlay"></div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <h1>Fix the Comment</h1>
+    <a href="index.html" class="home-btn">
+      <i class="fas fa-home"></i> Kembali ke Beranda
+    </a>
+  </header>
+
+  <div class="nav-buttons">
+    <a href="Game.html" class="nav-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+    <a href="index.html" class="nav-btn">
+      Next <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+ 
+    <section class="content">
+        <div class="section-header">
+            <div class="section-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>Game Interaktif</span>
+            </div>
+            
+            <h2 class="gradient-text">Perbaiki Komentar untuk Menghindari Cyberbullying</h2>
+            <p>Ubah komentar toxic menjadi respons yang sopan, empatik, dan konstruktif!</p>
+        </div>
+    <!-- Start Screen -->
+
+    <div class="start-screen" id="startScreen">
+     
+      
+      <div class="start-screen-content">
+        <div class="start-screen-content-inner">
+          <p>
+            Dalam game ini, kamu akan menghadapi 20 situasi yang sering terjadi di dunia digital dengan komentar-komentar toxic.
+            Tugas kamu adalah mengubah komentar tersebut menjadi respons yang lebih positif!
+          </p>
+          
+          <div class="warning-box">
+            <div class="warning-title">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>Peringatan Edukasi</span>
+            </div>
+            <div class="warning-content">
+              Game ini mengandung contoh komentar toxic yang bersifat <strong>edukatif</strong> semata. 
+              Tujuannya adalah untuk mengajarkan cara merespons komentar negatif dengan cara yang positif dan konstruktif. 
+              Kami tidak mendukung penggunaan kata-kata kasar dalam komunikasi sehari-hari.
+            </div>
+          </div>
+          
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-comments"></i>
+              </div>
+              <div class="feature-text">
+                <h4>20 Skenario Realistis</h4>
+                <p>Berbagai situasi online yang sering dijumpai</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-lightbulb"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Belajar Empati</h4>
+                <p>Latih kemampuan memahami sudut pandang orang lain</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="feature-text">
+                <h4>Sistem Penilaian</h4>
+                <p>Dapatkan skor berdasarkan respons yang kamu berikan</p>
+              </div>
+            </div>
+          </div>
+          
+          <p style="color: #FDF5AA; font-weight: bold; font-size: 1.2em;">
+            💡 Ingat: Komunikasi positif menciptakan lingkungan digital yang lebih sehat!
+          </p>
+        </div>
+      </div>
+      
+      <button class="start-btn" onclick="startGame()">
+        <i class="fas fa-play"></i> Mulai Game
+      </button>
+    </div>
+
+    
+
+    <div class="game-container" id="gameContainer">
+      <div class="game-stats">
+        <div class="stat-item">
+          <div class="stat-icon score-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="stat-text">
+            Skor: <span class="stat-value" id="scoreDisplay">0</span>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon question-icon">
+            <i class="fas fa-question-circle"></i>
+          </div>
+          <div class="stat-text">
+            Soal: <span class="stat-value" id="currentQuestion">1/20</span>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon time-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-text">
+            Waktu: <span class="stat-value" id="timer">00:00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">1 dari 20 komentar</div>
+      </div>
+
+      <div class="tips-container">
+        <div class="tips-title">
+          <i class="fas fa-lightbulb"></i>
+          <span>Tips:</span>
+        </div>
+        <ul class="tips-list">
+          <li>Ganti kata-kata kasar dengan alternatif yang lebih sopan</li>
+          <li>Tambahkan empati dengan mencoba memahami sudut pandang orang lain</li>
+          <li>Berikan saran konstruktif daripada hanya mengkritik</li>
+          <li>Fokus pada perilaku, bukan pada karakter orang</li>
+        </ul>
+      </div>
+
+      <div class="comment-card">
+        <div class="comment-header">
+          <span class="comment-number" id="commentNumber">Komentar #1</span>
+          <span class="comment-label">Komentar Toxic</span>
+        </div>
+        
+        <div class="situation-container">
+          <div class="situation-title">
+            <i class="fas fa-info-circle"></i>
+            <span>Situasi:</span>
+          </div>
+          <div class="situation-text" id="situationText">
+            Seseorang memposting foto dirinya.
+          </div>
+        </div>
+        
+        <div class="comment-text" id="toxicComment">
+          "Kok jelek banget fotomu, dasar norak."
+        </div>
+      </div>
+
+      <div class="response-section">
+        <label for="userResponse" class="response-label">Tulis versi perbaikan komentar:</label>
+        <textarea id="userResponse" class="response-input" placeholder="Tulis komentar yang lebih sopan, empatik, dan konstruktif di sini..." maxlength="300"></textarea>
+        <div class="character-count"><span id="charCount">0</span>/300 karakter</div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-secondary" id="skipBtn">
+          <i class="fas fa-forward"></i> Lewati
+        </button>
+        <button class="btn" id="submitBtn">
+          <i class="fas fa-check"></i> Kirim Jawaban
+        </button>
+      </div>
+    </div>
+
+    <div class="result-container" id="resultContainer">
+      <div class="result-header">
+        <h2 class="result-title">Hasil Penilaian</h2>
+        <div class="result-score" id="resultScore">Skor: 0</div>
+      </div>
+
+      <div class="result-feedback" id="resultFeedback">
+        <!-- Feedback will be dynamically inserted here -->
+      </div>
+
+      <div class="comparison-container">
+        <div class="comparison-box user-response">
+          <div class="comparison-title">
+            <i class="fas fa-user"></i>
+            <span>Jawaban Anda:</span>
+          </div>
+          <div class="comparison-text" id="userAnswer">
+            <!-- User answer will be displayed here -->
+          </div>
+        </div>
+        <div class="comparison-box model-response">
+          <div class="comparison-title">
+            <i class="fas fa-star"></i>
+            <span>Contoh Jawaban Model:</span>
+          </div>
+          <div class="comparison-text" id="modelAnswer">
+            <!-- Model answer will be displayed here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-secondary" id="tryAgainBtn">
+          <i class="fas fa-redo"></i> Coba Lagi
+        </button>
+        <button class="btn" id="nextBtn">
+          <i class="fas fa-arrow-right"></i> Lanjut
+        </button>
+      </div>
+    </div>
+
+    <div class="game-complete" id="gameComplete">
+      <h2>Selamat! Anda telah menyelesaikan semua komentar!</h2>
+      <div class="final-score" id="finalScore">0%</div>
+      <p class="final-message" id="finalMessage">Terus berlatih untuk meningkatkan kemampuan komunikasi Anda!</p>
+      <div class="achievement">
+        <div class="achievement-badge">🏆</div>
+      </div>
+      <button class="btn" id="restartBtn">
+        <i class="fas fa-redo"></i> Main Lagi
+      </button>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Media Pembelajaran Informatika | Dibuat oleh Anggi Clementine (237111039)</p>
+  </footer>
+
+  <script>
+    // Data komentar toxic dan jawaban model dengan situasi
+    const commentsData = [
+      {
+        situation: "📝 Seseorang mengunggah foto dirinya di media sosial, mungkin dengan gaya berpakaian yang unik atau pose yang tidak biasa. Komentar toxic muncul karena perbedaan selera atau niat mengejek.",
+        toxic: "Kok jelek banget fotomu, dasar norak.",
+        model: "Gayamu unik. Kalau mau, aku bisa kasih saran biar foto lebih rapi."
+      },
+      {
+        situation: "📝 Dalam grup diskusi online, seseorang menyampaikan pendapat atau analisis yang belum lengkap. Komentar toxic muncul karena ketidaksabaran atau merasa superior.",
+        toxic: "Goblok sih lu, ngapain nulis begitu.",
+        model: "Pendapatmu menarik. Bisa jelasin sumber atau alasanmu?"
+      },
+      {
+        situation: "📝 Diskusi memanas karena perbedaan pendapat. Salah satu peserta mulai menyerang pribadi, bukan isi argumen.",
+        toxic: "Udah goblok, diem aja deh.",
+        model: "Aku kurang setuju, tapi ingin dengar alasanmu. Bisa ceritain?"
+      },
+      {
+        situation: "📝 Seseorang memposting konten yang terlihat aneh, emosional, atau tidak biasa—mungkin karena sedang mengalami tekanan, stres, atau masalah pribadi. Postingan itu bisa berupa curhat samar, foto yang tidak lazim, atau caption yang membingungkan. Komentar toxic muncul dari orang yang tidak memahami konteks dan malah mengancam atau mengejek.",
+        toxic: "Abis ini lo bakalan malu banget, nunggu aja.",
+        model: "Kalau postingan ini ada maksud tertentu, semoga kamu baik-baik aja. Jangan ragu buat ngobrol."
+      },
+      {
+        situation: "📝 Seseorang upload hasil bermain game. Namun hasilnya kurang maksimal",
+        toxic: "Sumpah lo payah banget mainnya.",
+        model: "Kamu sudah berusaha. Mau latihan bareng supaya lebih jago?"
+      },
+      {
+        situation: "📝 Seorang anak atau remaja ikut berdiskusi di forum dewasa. Komentar toxic muncul karena meremehkan usia atau pengalaman.",
+        toxic: "Bocil, jangan ikut campur.",
+        model: "Semua pendapat penting. Bisa jelasin maksudmu lebih tenang?"
+      },
+      {
+        situation: "📝 Seseorang menyampaikan pendapat yang kontroversial. Komentar toxic muncul sebagai reaksi emosional.",
+        toxic: "Nyebelin amat, gak punya otak ya?",
+        model: "Kalimatmu kurang bagus dibaca. Bisa jelasin sudut pandangmu tanpa menghina?"
+      },
+      {
+        situation: "📝 Seseorang membuat kesalahan dalam tugas atau jawaban di kelas atau forum belajar. Komentar toxic muncul karena meremehkan kemampuan.",
+        toxic: "Ngapain sekolah kalau kayak gitu doang kamu ngga tau?",
+        model: "Kalau kamu kesulitan, kita cari sumber belajar bareng."
+      },
+      {
+        situation: "📝 Seseorang posting video acting.",
+        toxic: "Actingnya jelek banget",
+        model: "Kamu percaya diri. Ada yang ingin kamu sampaikan lewat video ini?"
+      },
+      {
+        situation: "📝 Seseorang upload video challenge yang dianggap tidak sopan atau tidak sesuai norma",
+        toxic: "Kelakuanmu memalukan.",
+        model: "Mungkin ada cara lain yang lebih aman dan sopan untuk nyoba challenge ini."
+      },
+      {
+        situation: "📝 Seorang perempuan mengunggah foto wajah atau selfie dengan makeup. Komentar toxic muncul sebagai body shaming atau ejekan fisik",
+        toxic: "Jangan posting lagi, muka kamu itu bencana. Makeupnya jelek",
+        model: "Wah, cakep kak, coba belajar lagi cara makeup dari konten creator makeup lainnya pasti hasilnya akan lebih bagus."
+      },
+      {
+        situation: "📝 Seseorang ingin bergabung dengan klub atau komunitas. Komentar toxic muncul karena diskriminasi atau eksklusivitas.",
+        toxic: "Orang kayak lo gak pantas masuk klub itu.",
+        model: "Kalau minat, ini syaratnya. Kamu bisa coba penuhi pelan-pelan."
+      },
+      {
+        situation: "📝 Seseorang mencoba memberi saran atau arahan. Komentar toxic muncul karena merasa diatur atau dikritik.",
+        toxic: "Lu sok banget mau ngatur orang.",
+        model: "Terima kasih ya sarannya, saya akan pertimbangkan."
+      },
+      {
+        situation: "📝 Seseorang menyalahkan orang lain atas masalah. Komentar toxic muncul sebagai serangan pribadi.",
+        toxic: "Udah bodoh, nyalahin orang terus.",
+        model: "Jangan salahkan orang lain dulu. Ayo lihat fakta dulu dan cari solusi bareng."
+      },
+      {
+        situation: "📝 Seseorang curhat tentang masalahnya.",
+        toxic: "Kamu cuma drama, ngeluh mulu.",
+        model: "Kalau mau cerita, aku siap dengerin. Apa yang sebenarnya terjadi?"
+      },
+      {
+        situation: "📝 Seseorang bertanya hal yang ia belum paham.",
+        toxic: "Kenapa sih gak ngerti-ngerti? Bodoh.",
+        model: "Kalau kurang jelas, bilang ya. Kita bahas pelan-pelan."
+      },
+      {
+        situation: "📝 Seseorang menunjukkan kepribadian yang berbeda atau tidak populer. Komentar toxic muncul sebagai penolakan sosial.",
+        toxic: "Gak bakal ada yang suka sama kamu.",
+        model: "Pasti ada yang dukung. Terus percaya diri, kamu punya kelebihan."
+      },
+      {
+        situation: "📝 Seseorang mengalami bullying dan membagikan pengalamannya. Komentar toxic muncul sebagai pembenaran atas kekerasan.",
+        toxic: "Wajar aja dibully.",
+        model: "Bullying tetap salah. Kita cari cara biar semua aman."
+      },
+      {
+        situation: "📝 Seseorang posting cerita sedih.",
+        toxic: "Stop lebay, tumbuh dewasa lah.",
+        model: "Aku tahu ini berat. Ada yang bisa kubantu?"
+      },
+      {
+        situation: "📝 Seseorang membagikan berita tanpa verifikasi.",
+        toxic: "Kamu bodoh banget kalau percaya itu.",
+        model: "Setiap berita belum tentu benar, coba cek kebenarannya dulu."
+      }
+    ];
+
+    // Game state
+    let currentQuestion = 0;
+    let score = 0;
+    let userAnswers = [];
+    let isAnswered = false;
+    let startTime;
+    let timerInterval;
+
+    // DOM elements
+    const toxicCommentEl = document.getElementById('toxicComment');
+    const situationTextEl = document.getElementById('situationText');
+    const userResponseEl = document.getElementById('userResponse');
+    const charCountEl = document.getElementById('charCount');
+    const currentQuestionEl = document.getElementById('currentQuestion');
+    const scoreDisplayEl = document.getElementById('scoreDisplay');
+    const commentNumberEl = document.getElementById('commentNumber');
+    const progressBarEl = document.getElementById('progressBar');
+    const progressTextEl = document.getElementById('progressText');
+    const resultContainerEl = document.getElementById('resultContainer');
+    const gameCompleteEl = document.getElementById('gameComplete');
+    const submitBtn = document.getElementById('submitBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const tryAgainBtn = document.getElementById('tryAgainBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const timerEl = document.getElementById('timer');
+    const startScreenEl = document.getElementById('startScreen');
+    const gameContainerEl = document.getElementById('gameContainer');
+    const gameHeaderEl = document.getElementById('gameHeader');
+
+    // Initialize game
+    function initGame() {
+      currentQuestion = 0;
+      score = 0;
+      userAnswers = [];
+      isAnswered = false;
+      updateQuestion();
+      updateStats();
+      resetResult();
+      startTimer();  
+      // Show game container, hide result and complete screens
+      gameContainerEl.classList.add('active');
+      gameHeaderEl.style.display = 'block';
+      resultContainerEl.classList.remove('active');
+      gameCompleteEl.classList.remove('active');
+    }
+    // Start game function
+    function startGame() {
+      // Hide start screen
+      startScreenEl.classList.add('hidden');
+      
+      // Initialize and start the game
+      initGame();
+    }
+
+    // Start timer
+    function startTimer() {
+      startTime = Date.now();
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = Math.floor(elapsed / 60);
+        const seconds = elapsed % 60;
+        timerEl.textContent = 
+          `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    // Update current question
+    function updateQuestion() {
+      const comment = commentsData[currentQuestion];
+      toxicCommentEl.textContent = comment.toxic;
+      situationTextEl.textContent = comment.situation;
+      commentNumberEl.textContent = `Komentar #${currentQuestion + 1}`;
+      userResponseEl.value = '';
+      charCountEl.textContent = '0';
+      isAnswered = false;
+      
+      // Update progress
+      const progress = ((currentQuestion + 1) / commentsData.length) * 100;
+      progressBarEl.style.width = `${progress}%`;
+      progressTextEl.textContent = `${currentQuestion + 1} dari ${commentsData.length} komentar`;
+      
+      // Reset buttons
+      submitBtn.disabled = false;
+      skipBtn.disabled = false;
+    }
+
+    // Update stats
+    function updateStats() {
+      currentQuestionEl.textContent = `${currentQuestion + 1}/20`;
+      scoreDisplayEl.textContent = score;
+    }
+
+    // Reset result container
+    function resetResult() {
+      resultContainerEl.classList.remove('active');
+    }
+
+    // Calculate score for current answer
+    function calculateScore(userAnswer, modelAnswer) {
+      let score = 0;
+      let feedback = [];
+      
+      // Check if user provided an answer
+      if (!userAnswer.trim()) {
+        feedback.push({
+          type: 'negative',
+          text: 'Anda belum memberikan jawaban. Cobalah untuk menulis respons yang sopan dan konstruktif.'
+        });
+        return { score: 0, feedback };
+      }
+      
+      // Check for toxic words (simplified check)
+      const toxicWords = ['goblok', 'bodoh', 'jelek', 'payah', 'parah', 'memalukan', 'bencana', 'pathetic', 'dramatic', 'lebay'];
+      const hasToxicWords = toxicWords.some(word => userAnswer.toLowerCase().includes(word));
+      
+      if (hasToxicWords) {
+        feedback.push({
+          type: 'negative',
+          text: 'Jawaban Anda masih mengandung kata-kata yang kurang sopan. Cobalah untuk mengganti kata-kata tersebut dengan alternatif yang lebih positif.'
+        });
+      } else {
+        score += 20;
+        feedback.push({
+          type: 'positive',
+          text: 'Bagus! Anda telah menghindari penggunaan kata-kata yang kasar atau tidak sopan.'
+        });
+      }
+      
+      // Check for constructive elements
+      const constructiveWords = ['saran', 'bantu', 'cari', 'cek', 'jelas', 'mari', 'kita', 'bisa', 'mau', 'bareng'];
+      const hasConstructiveWords = constructiveWords.some(word => userAnswer.toLowerCase().includes(word));
+      
+      if (hasConstructiveWords) {
+        score += 30;
+        feedback.push({
+          type: 'positive',
+          text: 'Hebat! Anda memberikan respons yang konstruktif dan menawarkan solusi.'
+        });
+      } else {
+        feedback.push({
+          type: 'suggestion',
+          text: 'Coba tambahkan elemen konstruktif seperti menawarkan bantuan atau saran perbaikan.'
+        });
+      }
+      
+      // Check for empathy
+      const empathyWords = ['paham', 'mengerti', 'bisa', 'saran', 'rasa', 'maaf', 'terima kasih', 'setuju'];
+      const hasEmpathyWords = empathyWords.some(word => userAnswer.toLowerCase().includes(word));
+      
+      if (hasEmpathyWords) {
+        score += 30;
+        feedback.push({
+          type: 'positive',
+          text: 'Bagus! Anda menunjukkan empati dalam respons Anda.'
+        });
+      } else {
+        feedback.push({
+          type: 'suggestion',
+          text: 'Coba tambahkan elemen empati dengan mencoba memahami sudut pandang orang lain.'
+        });
+      }
+      
+      // Check length (not too short)
+      if (userAnswer.length >= 20) {
+        score += 20;
+        feedback.push({
+          type: 'positive',
+          text: 'Respons Anda cukup panjang dan memberikan konteks yang jelas.'
+        });
+      } else {
+        feedback.push({
+          type: 'suggestion',
+          text: 'Coba tulis respons yang lebih panjang untuk memberikan konteks yang lebih jelas.'
+        });
+      }
+      
+      return { score, feedback };
+    }
+
+    // Show result
+    function showResult() {
+      const userAnswer = userResponseEl.value;
+      const modelAnswer = commentsData[currentQuestion].model;
+      const { score: questionScore, feedback } = calculateScore(userAnswer, modelAnswer);
+      
+      // Update total score
+      score += questionScore;
+      updateStats();
+      
+      // Store user answer
+      userAnswers.push({
+        question: currentQuestion,
+        userAnswer,
+        modelAnswer,
+        score: questionScore
+      });
+      
+      // Display result
+      document.getElementById('resultScore').textContent = `Skor: ${questionScore}/100`;
+      
+      // Set score color based on performance
+      const resultScoreEl = document.getElementById('resultScore');
+      resultScoreEl.className = 'result-score';
+      if (questionScore >= 80) {
+        resultScoreEl.classList.add('score-excellent');
+      } else if (questionScore >= 50) {
+        resultScoreEl.classList.add('score-good');
+      } else {
+        resultScoreEl.classList.add('score-poor');
+      }
+      
+      // Display feedback
+      const feedbackContainer = document.getElementById('resultFeedback');
+      feedbackContainer.innerHTML = '';
+      
+      feedback.forEach(item => {
+        const feedbackEl = document.createElement('div');
+        feedbackEl.className = `feedback-item feedback-${item.type}`;
+        
+        let icon = '';
+        if (item.type === 'positive') {
+          icon = '<i class="fas fa-check-circle feedback-icon"></i>';
+        } else if (item.type === 'negative') {
+          icon = '<i class="fas fa-times-circle feedback-icon"></i>';
+        } else {
+          icon = '<i class="fas fa-lightbulb feedback-icon"></i>';
+        }
+        
+        feedbackEl.innerHTML = `
+          ${icon}
+          <div class="feedback-text">${item.text}</div>
+        `;
+        feedbackContainer.appendChild(feedbackEl);
+      });
+      
+      // Display answers
+      document.getElementById('userAnswer').textContent = userAnswer || '(Tidak ada jawaban)';
+      document.getElementById('modelAnswer').textContent = modelAnswer;
+      
+      // Show result container
+      resultContainerEl.classList.add('active');
+      
+      // Mark as answered
+      isAnswered = true;
+      
+      // Disable buttons
+      submitBtn.disabled = true;
+      skipBtn.disabled = true;
+      
+      // Scroll to result
+      resultContainerEl.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Show game complete screen
+    function showGameComplete() {
+      clearInterval(timerInterval);
+      gameContainerEl.classList.remove('active');
+      gameHeaderEl.style.display = 'none';
+      resultContainerEl.classList.remove('active');
+      gameCompleteEl.classList.add('active');
+      
+      // Calculate final score
+      const finalScore = Math.round((score / (commentsData.length * 100)) * 100);
+      document.getElementById('finalScore').textContent = `${finalScore}%`;
+      
+      // Set final message based on score
+      const finalMessageEl = document.getElementById('finalMessage');
+      if (finalScore >= 80) {
+        finalMessageEl.textContent = 'Luar biasa! Anda sangat mahir dalam mengubah komentar toxic menjadi respons yang positif dan konstruktif.';
+      } else if (finalScore >= 60) {
+        finalMessageEl.textContent = 'Bagus! Anda sudah memiliki pemahaman yang baik tentang komunikasi yang positif. Terus berlatih untuk menjadi lebih baik lagi!';
+      } else {
+        finalMessageEl.textContent = 'Terus berlatih! Perbaiki kemampuan komunikasi Anda dengan mencoba mengubah komentar toxic menjadi respons yang lebih positif.';
+      }
+      
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Event listeners
+    submitBtn.addEventListener('click', showResult);
+    
+    skipBtn.addEventListener('click', () => {
+      if (confirm('Apakah Anda yakin ingin melewati pertanyaan ini? Anda tidak akan mendapatkan skor untuk pertanyaan ini.')) {
+        userAnswers.push({
+          question: currentQuestion,
+          userAnswer: '',
+          modelAnswer: commentsData[currentQuestion].model,
+          score: 0
+        });
+        
+        if (currentQuestion < commentsData.length - 1) {
+          currentQuestion++;
+          updateQuestion();
+          updateStats();
+          resetResult();
+        } else {
+          showGameComplete();
+        }
+      }
+    });
+    
+    tryAgainBtn.addEventListener('click', () => {
+      resetResult();
+      userResponseEl.focus();
+    });
+    
+    nextBtn.addEventListener('click', () => {
+      if (currentQuestion < commentsData.length - 1) {
+        currentQuestion++;
+        updateQuestion();
+        updateStats();
+        resetResult();
+      } else {
+        showGameComplete();
+      }
+    });
+    
+    restartBtn.addEventListener('click', () => {
+      clearInterval(timerInterval);
+      // Go back to start screen
+      gameCompleteEl.classList.remove('active');
+      startScreenEl.classList.remove('hidden');
+    });
+    
+    // Character count
+    userResponseEl.addEventListener('input', () => {
+      charCountEl.textContent = userResponseEl.value.length;
+    });
+
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 15;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 6 + 3;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 15}s`;
+        particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Enhanced starfield animation
+    (function () {
+      const canvas = document.getElementById('stars');
+      const ctx = canvas.getContext('2d');
+
+      const STAR_COUNT = Math.floor((window.innerWidth * window.innerHeight) / 2000);
+      const MAX_RADIUS = 2;
+      const MIN_RADIUS = 0.4;
+      const TWINKLE_SPEED = 0.02;
+      const SHOOTING_STAR_CHANCE = 0.001;
+      const SHOOTING_STAR_SPEED = 15;
+
+      let stars = [];
+      let shootingStars = [];
+      let w = 0, h = 0, t = 0;
+
+      function rand(min, max) { return Math.random() * (max - min) + min; }
+
+      function makeStar() {
+        return {
+          x: Math.random(),
+          y: Math.random(),
+          r: rand(MIN_RADIUS, MAX_RADIUS),
+          baseAlpha: rand(0.4, 1.0),
+          twinklePhase: Math.random() * Math.PI * 2,
+          twinkleSpeed: rand(TWINKLE_SPEED * 0.5, TWINKLE_SPEED * 1.5)
+        };
+      }
+
+      function makeShootingStar() {
+        const angle = rand(0, Math.PI * 0.5);
+        return {
+          x: rand(0, 0.5),
+          y: rand(0, 0.5),
+          vx: Math.cos(angle) * SHOOTING_STAR_SPEED * 0.001,
+          vy: Math.sin(angle) * SHOOTING_STAR_SPEED * 0.001,
+          length: rand(0.05, 0.15),
+          alpha: 1.0
+        };
+      }
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+
+      function init() {
+        resize();
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          stars.push(makeStar());
+        }
+      }
+
+      function animate() {
+        t += 0.01;
+        ctx.fillStyle = 'rgba(17, 63, 103, 0.1)';
+        ctx.fillRect(0, 0, w, h);
+
+        stars.forEach(star => {
+          const twinkle = Math.sin(star.twinklePhase + t * star.twinkleSpeed) * 0.5 + 0.5;
+          const alpha = star.baseAlpha * twinkle;
+          
+          ctx.beginPath();
+          ctx.arc(star.x * w, star.y * h, star.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+        });
+
+        if (Math.random() < SHOOTING_STAR_CHANCE) {
+          shootingStars.push(makeShootingStar());
+        }
+
+        shootingStars = shootingStars.filter(star => {
+          star.x += star.vx;
+          star.y += star.vy;
+          star.alpha -= 0.01;
+
+          if (star.alpha <= 0) return false;
+
+          const gradient = ctx.createLinearGradient(
+            star.x * w, star.y * h,
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${star.alpha})`);
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(star.x * w, star.y * h);
+          ctx.lineTo(
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          ctx.stroke();
+
+          return true;
+        });
+        requestAnimationFrame(animate);
+      }
+      window.addEventListener('resize', init);
+      init();
+      animate();
+    })();
+
+    // Initialize particles when page loads
+    window.onload = () => {
+      createParticles();
+      // Don't start the game automatically, wait for user to click "Mulai Game"
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share or Safe? - Digital Safety Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #113F67;
+            color: #1c1c1c;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        canvas#stars {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 0;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(253, 245, 170, 0.03), transparent 50%);
+        }
+
+        /* === MODERN HEADER === */
+        header {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        header h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+        .home-btn {
+      background: rgba(253, 245, 170, 0.2);
+      color: #ffffff;
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .home-btn:hover {
+      background: rgba(253, 245, 170, 0.3);
+      border-color: rgba(253, 245, 170, 0.5);
+      transform: translateY(-2px);
+    }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            font-size: 0.95em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        nav a.active {
+            color: #113F67;
+            background: #FDF5AA;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(253, 245, 170, 0.3);
+        }
+
+        /* === FLOATING NAV BUTTONS === */
+        .nav-buttons {
+            position: fixed;
+            bottom: 390px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1000px;
+            z-index: 50;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 500;
+            padding: 14px 30px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn:hover {
+            background: rgba(253, 245, 170, 0.2);
+            border-color: rgba(253, 245, 170, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(253, 245, 170, 0.2);
+        }
+
+        /* === CONTENT SECTION === */
+        /* === CONTENT SECTION === */
+        .content {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(253, 245, 170, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(253, 245, 170, 0.3);
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: #FDF5AA;
+            font-size: 1.2em;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 3em;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+        }
+
+        .section-header .gradient-text {
+            background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 50%, #FDF5AA 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .section-header p {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        
+        .game-container {
+            background: rgba(40, 65, 109, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 1200px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInScale 1s ease-out 0.3s both;
+        }
+
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(253, 245, 170, 0.08) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* === GAME LAYOUT === */
+        .game-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* === GAME HEADER === */
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+            grid-column: 1 / -1;
+        }
+
+        .game-title {
+            font-size: 3em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 50%, #FDF5AA 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .game-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+        }
+
+        /* === MAIN GAME AREA === */
+        .game-main {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 500px;
+            position: relative;
+        }
+
+        /* === STATS PANEL === */
+        .stats-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .stats-title {
+            color: #FDF5AA;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            background: rgba(253, 245, 170, 0.1);
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #FDF5AA;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        /* === TIMER === */
+        .timer-container {
+            margin-bottom: 25px;
+        }
+
+        .timer-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #ffc107, #dc3545);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .timer-text {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        /* === CARD STACK === */
+        .card-stack {
+            position: relative;
+            height: 350px;
+            margin-bottom: 30px;
+        }
+
+        .game-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            cursor: grab;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(253, 245, 170, 0.2);
+        }
+
+        .game-card:active {
+            cursor: grabbing;
+        }
+
+        .game-card.swiping {
+            transition: none;
+        }
+
+        .game-card.swipe-left {
+            animation: swipeLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .game-card.swipe-right {
+            animation: swipeRight 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes swipeLeft {
+            to {
+                transform: translateX(-150%) rotate(-30deg) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        @keyframes swipeRight {
+            to {
+                transform: translateX(150%) rotate(30deg) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        .card-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #113F67 0%, #284E7C 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+        }
+
+        .card-text {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #113F67;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .card-hint {
+            background: rgba(253, 245, 170, 0.1);
+            border-left: 4px solid #FDF5AA;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            color: #113F67;
+            font-weight: 500;
+        }
+
+        /* === SWIPE INDICATORS === */
+        .swipe-indicator {
+            position: absolute;
+            top: 50%;
+            font-size: 3.5em;
+            font-weight: 900;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .swipe-left-indicator {
+            left: 20px;
+            color: #dc3545;
+        }
+
+        .swipe-right-indicator {
+            right: 20px;
+            color: #28a745;
+        }
+
+        .game-card.tilting-left .swipe-left-indicator {
+            opacity: 0.8;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .game-card.tilting-right .swipe-right-indicator {
+            opacity: 0.8;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* === MODERN BUTTONS === */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .action-btn {
+            padding: 18px 40px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-safe {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-share {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .action-btn i {
+            font-size: 1.2em;
+        }
+         /* === FOOTER === */
+    footer {
+      background: rgba(253, 245, 170, 0.95);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 30px;
+      color: #113F67;
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(17, 63, 103, 0.1);
+    }
+
+    footer p {
+      font-weight: 500;
+      font-size: 0.95em;
+    }
+    
+
+        /* === START SCREEN (SIMPLIFIED) === */
+        .start-screen {
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 20px;
+            margin: 0 0;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            background: rgba(253, 245, 170, 0.1);
+        }
+
+        .info-icon {
+            font-size: 2.5em;
+            color: #FDF5AA;
+            margin-bottom: 15px;
+        }
+
+        .info-title {
+            color: white;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .info-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .instructions-simple {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .instructions-title {
+            color: #FDF5AA;
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .instructions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .instruction-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .instruction-icon {
+            color: #FDF5AA;
+            font-size: 1.3em;
+            flex-shrink: 0;
+        }
+
+        .instruction-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .action-guide {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+        }
+
+        .action-item {
+            text-align: center;
+        }
+
+        .action-box {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .action-box.safe {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .action-box.share {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .action-label {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .action-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+        }
+
+        .start-btn {
+            padding: 20px 60px;
+            background: linear-gradient(135deg, #FDF5AA 0%, #f4e87c 100%);
+            color: #113F67;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.3em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(253, 245, 170, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .start-btn:hover::before {
+            left: 100%;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(253, 245, 170, 0.5);
+        }
+
+        /* === END SCREEN === */
+        .end-screen {
+            text-align: center;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .end-title {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: #FDF5AA;
+            margin-bottom: 30px;
+        }
+
+        .final-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .final-stat {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .final-stat:hover {
+            transform: translateY(-2px);
+            background: rgba(253, 245, 170, 0.1);
+        }
+
+        .final-stat-value {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: #FDF5AA;
+            margin-bottom: 5px;
+        }
+
+        .final-stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .final-message {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+
+        .restart-btn {
+            padding: 18px 45px;
+            background: linear-gradient(135deg, #FDF5AA 0%, #f4e87c 100%);
+            color: #113F67;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(253, 245, 170, 0.4);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(253, 245, 170, 0.5);
+        }
+
+        /* === FEEDBACK MODAL === */
+        .feedback-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .feedback-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .feedback-content {
+            background: rgba(40, 65, 109, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feedback-modal.show .feedback-content {
+            transform: scale(1);
+        }
+
+        .feedback-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .feedback-title {
+            font-size: 2em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .feedback-text {
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .feedback-points {
+            font-size: 2.5em;
+            font-weight: 900;
+        }
+
+        .feedback-points.positive {
+            color: #28a745;
+        }
+
+        .feedback-points.negative {
+            color: #dc3545;
+        }
+
+        /* === STREAK BADGE === */
+        .streak-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(135deg, #ffc107, #FDF5AA);
+            color: #113F67;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.4);
+            animation: bounceIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* === HIDDEN CLASS === */
+        .hidden {
+            display: none !important;
+        }
+
+        /* === FLOATING PARTICLES === */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(253, 245, 170, 0.8), transparent);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) translateX(20px) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(100px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1024px) {
+            .game-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .stats-panel {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+                position: static;
+            }
+
+            .stats-title {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px 25px;
+                gap: 15px;
+            }
+
+            header h1 {
+                font-size: 1.3em;
+            }
+
+            nav {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            nav a {
+                padding: 8px 15px;
+                font-size: 0.85em;
+            }
+
+            .content {
+                padding: 30px 20px 80px;
+            }
+
+            .game-container {
+                padding: 25px;
+            }
+
+            .game-title {
+                font-size: 2em;
+            }
+
+            .game-main {
+                padding: 20px;
+            }
+
+            .card-text {
+                font-size: 1.1em;
+            }
+
+            .action-buttons {
+                gap: 15px;
+            }
+
+            .action-btn {
+                padding: 15px 25px;
+                font-size: 1em;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .instructions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-guide {
+                gap: 20px;
+            }
+
+            .final-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-buttons {
+                bottom: 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                padding: 12px 24px;
+                font-size: 0.9em;
+            }
+
+            .stats-panel {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-title {
+                font-size: 1.8em;
+            }
+
+            .welcome-title {
+                font-size: 2em;
+            }
+
+            .game-container {
+                padding: 20px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="stars" aria-hidden="true"></canvas>
+    <div class="overlay"></div>
+    <div class="particles" id="particles"></div>
+<header>
+    <h1>Share or Safe?</h1>
+    <a href="index.html" class="home-btn">
+      <i class="fas fa-home"></i> Kembali ke Beranda
+    </a>
+  </header>
+
+  <div class="nav-buttons">
+    <a href="Game.html" class="nav-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+    <a href="index.html" class="nav-btn">
+      Next <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+    <section class="content">
+        <div class="section-header">
+            <div class="section-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>Game Interaktif</span>
+            </div>
+            
+            <h2 class="gradient-text">Menjaga Privasi di Media Sosial</h2>
+            <p>Identifikasi konten digital yang aman atau berbahaya untuk dibagikan!</p>
+        </div>
+        <div class="game-container">
+            <!-- Start Screen (Simplified) -->
+            <div id="startScreen" class="start-screen">
+                <div class="welcome-section">
+                    
+           </div>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-icon">⏱️</div>
+                        <div class="info-title">10 Detik</div>
+                        <div class="info-text">Waktu untuk setiap keputusan</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">🎯</div>
+                        <div class="info-title">20+ Soal</div>
+                        <div class="info-text">Berbagai skenario nyata</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">🏆</div>
+                        <div class="info-title">Skor</div>
+                        <div class="info-text">Dapatkan poin maksimal</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">📚</div>
+                        <div class="info-title">Edukasi</div>
+                        <div class="info-text">Pelajari digital safety</div>
+                    </div>
+                </div>
+
+                <div class="instructions-simple">
+                    <h3 class="instructions-title">
+                        <i class="fas fa-gamepad"></i>
+                        Cara Bermain
+                    </h3>
+                    <div class="instructions-grid">
+                        <div class="instruction-item">
+                            <i class="fas fa-eye instruction-icon"></i>
+                            <span class="instruction-text">Baca konten dengan teliti</span>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-brain instruction-icon"></i>
+                            <span class="instruction-text">Analisis risiko keamanan</span>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-hand-pointer instruction-icon"></i>
+                            <span class="instruction-text">Klik tombol pilihan</span>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-clock instruction-icon"></i>
+                            <span class="instruction-text">Selesaikan sebelum waktu habis</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-guide">
+                    <div class="action-item">
+                        <div class="action-box safe">❌</div>
+                        <div class="action-label">JANGAN</div>
+                        <div class="action-desc">Tidak Aman Dibagikan</div>
+                    </div>
+                    <div class="action-item">
+                        <div class="action-box share">✅</div>
+                        <div class="action-label">AMAN</div>
+                        <div class="action-desc">Boleh Dibagikan</div>
+                    </div>
+                </div>
+
+                <button class="start-btn" onclick="startGame()">
+                    <i class="fas fa-play"></i> Mulai Game
+                </button>
+            </div>
+
+            <!-- Game Screen -->
+            <div id="gameScreen" class="hidden">
+                <div class="game-layout">
+                    <div class="game-main">
+                        <div class="timer-container">
+                            <div class="timer-bar">
+                                <div class="timer-fill" id="timerFill"></div>
+                            </div>
+                            <div class="timer-text">Waktu: <span id="timeLeft">10</span> detik</div>
+                        </div>
+
+                        <div class="card-stack" id="cardStack">
+                            <!-- Cards will be generated here -->
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="action-btn btn-safe" onclick="makeDecision('safe')">
+                                <i class="fas fa-times-circle"></i>
+                                <span>JANGAN</span>
+                            </button>
+                            <button class="action-btn btn-share" onclick="makeDecision('share')">
+                                <i class="fas fa-check-circle"></i>
+                                <span>AMAN</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stats-panel">
+                        <h3 class="stats-title">Statistik</h3>
+                        <div class="stat-item">
+                            <div class="stat-label">Skor</div>
+                            <div class="stat-value" id="score">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Benar</div>
+                            <div class="stat-value" id="correct">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Salah</div>
+                            <div class="stat-value" id="wrong">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Streak</div>
+                            <div class="stat-value" id="streak">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- End Screen -->
+            <div id="endScreen" class="hidden end-screen">
+                <h2 class="end-title">🎮 Game Selesai!</h2>
+                
+                <div class="final-stats">
+                    <div class="final-stat">
+                        <div class="final-stat-value" id="finalScore">0</div>
+                        <div class="final-stat-label">Total Skor</div>
+                    </div>
+                    <div class="final-stat">
+                        <div class="final-stat-value" id="accuracy">0%</div>
+                        <div class="final-stat-label">Akurasi</div>
+                    </div>
+                    <div class="final-stat">
+                        <div class="final-stat-value" id="totalCorrect">0</div>
+                        <div class="final-stat-label">Benar</div>
+                    </div>
+                    <div class="final-stat">
+                        <div class="final-stat-value" id="totalWrong">0</div>
+                        <div class="final-stat-label">Salah</div>
+                    </div>
+                </div>
+                
+                <div class="final-message" id="finalMessage"></div>
+                
+                <button class="restart-btn" onclick="location.reload()">
+                    <i class="fas fa-redo"></i> Main Lagi
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feedback Modal -->
+    <div class="feedback-modal" id="feedbackModal">
+        <div class="feedback-content">
+            <div class="feedback-icon" id="feedbackIcon"></div>
+            <div class="feedback-title" id="feedbackTitle"></div>
+            <div class="feedback-text" id="feedbackText"></div>
+            <div class="feedback-points" id="feedbackPoints"></div>
+        </div>
+    </div>
+<footer>
+    <p>© 2025 Media Pembelajaran Informatika | Dibuat oleh Anggi Clementine (237111039)</p>
+  </footer>
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 15;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 6 + 3;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+        
+        // Enhanced starfield animation
+        (function () {
+            const canvas = document.getElementById('stars');
+            const ctx = canvas.getContext('2d');
+
+            const STAR_COUNT = Math.floor((window.innerWidth * window.innerHeight) / 2000);
+            const MAX_RADIUS = 2;
+            const MIN_RADIUS = 0.4;
+            const TWINKLE_SPEED = 0.02;
+            const SHOOTING_STAR_CHANCE = 0.001;
+            const SHOOTING_STAR_SPEED = 15;
+
+            let stars = [];
+            let shootingStars = [];
+            let w = 0, h = 0, t = 0;
+
+            function rand(min, max) { return Math.random() * (max - min) + min; }
+
+            function makeStar() {
+                return {
+                    x: Math.random(),
+                    y: Math.random(),
+                    r: rand(MIN_RADIUS, MAX_RADIUS),
+                    baseAlpha: rand(0.4, 1.0),
+                    twinklePhase: Math.random() * Math.PI * 2,
+                    twinkleSpeed: rand(TWINKLE_SPEED * 0.5, TWINKLE_SPEED * 1.5)
+                };
+            }
+
+            function makeShootingStar() {
+                const angle = rand(0, Math.PI * 0.5);
+                return {
+                    x: rand(0, 0.5),
+                    y: rand(0, 0.5),
+                    vx: Math.cos(angle) * SHOOTING_STAR_SPEED * 0.001,
+                    vy: Math.sin(angle) * SHOOTING_STAR_SPEED * 0.001,
+                    length: rand(0.05, 0.15),
+                    alpha: 1.0
+                };
+            }
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+
+            function init() {
+                resize();
+                stars = [];
+                for (let i = 0; i < STAR_COUNT; i++) {
+                    stars.push(makeStar());
+                }
+            }
+
+            function animate() {
+                t += 0.01;
+                ctx.fillStyle = 'rgba(17, 63, 103, 0.1)';
+                ctx.fillRect(0, 0, w, h);
+
+                stars.forEach(star => {
+                    const twinkle = Math.sin(star.twinklePhase + t * star.twinkleSpeed) * 0.5 + 0.5;
+                    const alpha = star.baseAlpha * twinkle;
+                    
+                    ctx.beginPath();
+                    ctx.arc(star.x * w, star.y * h, star.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                    ctx.fill();
+                });
+
+                if (Math.random() < SHOOTING_STAR_CHANCE) {
+                    shootingStars.push(makeShootingStar());
+                }
+
+                shootingStars = shootingStars.filter(star => {
+                    star.x += star.vx;
+                    star.y += star.vy;
+                    star.alpha -= 0.01;
+
+                    if (star.alpha <= 0) return false;
+
+                    const gradient = ctx.createLinearGradient(
+                        star.x * w, star.y * h,
+                        (star.x - star.vx * star.length * 100) * w,
+                        (star.y - star.vy * star.length * 100) * h
+                    );
+                    gradient.addColorStop(0, `rgba(255, 255, 255, ${star.alpha})`);
+                    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(star.x * w, star.y * h);
+                    ctx.lineTo(
+                        (star.x - star.vx * star.length * 100) * w,
+                        (star.y - star.vy * star.length * 100) * h
+                    );
+                    ctx.stroke();
+
+                    return true;
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', init);
+            init();
+            animate();
+        })();
+
+        const contents = [
+            // AMAN untuk dibagikan (share = correct)
+            {
+                category: '🏆 Prestasi',
+                icon: '📚',
+                text: 'Foto sertifikat juara olimpiade matematika',
+                hint: 'Prestasi akademik positif',
+                correct: 'share',
+                feedback: {
+                    correct: 'Benar! Membagikan prestasi adalah jejak digital POSITIF yang bagus untuk masa depan.',
+                    wrong: 'Salah! Prestasi akademik itu AMAN dan BAIK untuk dibagikan sebagai jejak digital positif.'
+                },
+                points: 10
+            },
+            {
+                category: '🎨 Kreativitas',
+                icon: '🖼️',
+                text: 'Hasil karya seni/lukisan buatanmu sendiri',
+                hint: 'Portofolio kreatif',
+                correct: 'share',
+                feedback: {
+                    correct: 'Tepat! Karya kreatif membangun portofolio digital yang bernilai.',
+                    wrong: 'Kurang tepat! Karya seni sendiri AMAN dibagikan dan bisa jadi portofolio.'
+                },
+                points: 10
+            },
+            {
+                category: '🌍 Edukasi',
+                icon: '💡',
+                text: 'Artikel edukatif tentang lingkungan yang sudah kamu verifikasi',
+                hint: 'Konten bermanfaat',
+                correct: 'share',
+                feedback: {
+                    correct: 'Bagus! Berbagi konten edukatif terverifikasi adalah kontribusi positif.',
+                    wrong: 'Hmm, konten edukatif yang sudah diverifikasi AMAN dan BAIK untuk dibagikan.'
+                },
+                points: 10
+            },
+            {
+                category: '🤝 Sosial',
+                icon: '❤️',
+                text: 'Kampanye penggalangan dana untuk korban bencana (sumber resmi)',
+                hint: 'Aksi kebaikan',
+                correct: 'share',
+                feedback: {
+                    correct: 'Luar biasa! Membantu menyebarkan aksi kebaikan dari sumber terpercaya itu baik.',
+                    wrong: 'Kurang tepat! Kampanye resmi untuk kebaikan AMAN dibagikan.'
+                },
+                points: 10
+            },
+            {
+                category: '🎓 Akademik',
+                icon: '📖',
+                text: 'Tips belajar efektif dari pengalamanmu',
+                hint: 'Berbagi pengetahuan',
+                correct: 'share',
+                feedback: {
+                    correct: 'Benar! Berbagi tips berguna membangun reputasi sebagai orang yang membantu.',
+                    wrong: 'Sayang! Tips belajar dari pengalaman pribadi AMAN dan bermanfaat dibagikan.'
+                },
+                points: 10
+            },
+
+            // TIDAK AMAN untuk dibagikan (safe = correct)
+            {
+                category: '🔐 Data Pribadi',
+                icon: '🆔',
+                text: 'Foto KTP/Kartu Pelajar dengan NIK terlihat jelas',
+                hint: 'Identitas Pribadi',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Benar! NIK dan data identitas SANGAT BERBAHAYA jika bocor. Bisa disalahgunakan untuk penipuan!',
+                    wrong: 'SALAH! Foto KTP/identitas BERBAHAYA! NIK bisa dipakai untuk penipuan, pinjol ilegal, dll.'
+                },
+                points: 15
+            },
+            {
+                category: '📍 Lokasi',
+                icon: '🏠',
+                text: 'Posting real-time: "Lagi di mall sendirian nih, rumah kosong"',
+                hint: 'Live Location',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Tepat! Memberitahu rumah kosong = UNDANGAN bagi penjahat. Sangat berbahaya!',
+                    wrong: 'BERBAHAYA! Jangan pernah posting kalau rumah kosong atau lokasi real-time saat sendirian.'
+                },
+                points: 15
+            },
+            {
+                category: '😤 Emosi',
+                icon: '💢',
+                text: '"Benci banget sama guru X, dia ga adil! Semoga kena karma!"',
+                hint: 'Posting saat marah',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Benar! Posting saat emosi hampir SELALU berakhir buruk. Bisa viral dan merusak reputasimu.',
+                    wrong: 'Wah salah! Posting negatif tentang guru/orang lain bisa jadi masalah BESAR di masa depan.'
+                },
+                points: 15
+            },
+            {
+                category: '🔑 Keamanan',
+                icon: '🔒',
+                text: 'Screenshot email berisi password/kode OTP',
+                hint: 'Akses akun',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Tepat sekali! Password/OTP TIDAK BOLEH dibagikan dalam bentuk apapun. Akunmu bisa dibajak!',
+                    wrong: 'BAHAYA! Password/OTP adalah kunci akunmu. Jangan pernah dishare dalam bentuk apapun!'
+                },
+                points: 15
+            },
+            {
+                category: '👥 Privasi Orang Lain',
+                icon: '📸',
+                text: 'Foto teman dalam kondisi memalukan tanpa izin',
+                hint: 'Privasi',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Benar! Ini bentuk CYBER-BULLYING. Bisa melukai perasaan dan melanggar privasi orang lain.',
+                    wrong: 'SALAH! Foto memalukan orang tanpa izin = bullying digital. Sangat tidak etis dan bisa dilaporkan.'
+                },
+                points: 15
+            },
+            {
+                category: '💰 Finansial',
+                icon: '💳',
+                text: 'Foto kartu ATM (depan/belakang) dengan nomor kartu terlihat',
+                hint: 'Data perbankan',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Tepat! Nomor kartu ATM bisa dipakai untuk transaksi ilegal. JANGAN PERNAH difoto!',
+                    wrong: 'BERBAHAYA! Nomor kartu ATM + CVV bisa dipakai untuk belanja online ilegal!'
+                },
+                points: 15
+            },
+            {
+                category: '📱 Info Kontak',
+                icon: '📞',
+                text: 'Posting nomor HP/WhatsApp pribadi di grup publik',
+                hint: 'Kontak pribadi',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Benar! Nomor pribadi di publik = spam, penipuan, dan gangguan tak terbatas!',
+                    wrong: 'Salah! Nomor pribadi di publik sangat berisiko: spam, penipuan, telepon mengganggu.'
+                },
+                points: 15
+            },
+            {
+                category: '🗣️ Rumor',
+                icon: '👂',
+                text: 'Gossip/rumor tentang teman yang belum jelas kebenarannya',
+                hint: 'Belum terverifikasi!',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Tepat! Menyebarkan rumor = fitnah. Bisa merusak reputasi orang dan dirimu sendiri.',
+                    wrong: 'Salah! Rumor tanpa verifikasi = fitnah. Bisa jadi masalah hukum dan merusak reputasimu.'
+                },
+                points: 15
+            },
+            {
+                category: '🏫 Info Sekolah',
+                icon: '🗓️',
+                text: 'Jadwal keamanan sekolah atau pola absen guru',
+                hint: 'Data sensitif institusi',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Benar! Info keamanan institusi TIDAK BOLEH disebarkan. Bisa disalahgunakan!',
+                    wrong: 'Salah! Data keamanan sekolah bisa dimanfaatkan orang jahat. Sangat berbahaya!'
+                },
+                points: 15
+            },
+            {
+                category: '🎭 Konten Palsu',
+                icon: '🚫',
+                text: 'Berita sensational dengan judul clickbait tanpa cek sumber',
+                hint: 'Hoax or Fakta?',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Tepat! Menyebarkan hoax merusak reputasi digitalmu. Selalu cek fakta dulu!',
+                    wrong: 'Salah! Berbagi konten tanpa verifikasi bisa menyebarkan hoax dan merusak reputasimu.'
+                },
+                points: 15
+            },
+            {
+                category: '💬 Chat Pribadi',
+                icon: '📝',
+                text: 'Screenshot chat pribadi teman tanpa izin',
+                hint: 'Kepercayaan',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Benar! Screenshot chat tanpa izin = melanggar kepercayaan dan privasi. Sangat tidak etis!',
+                    wrong: 'Salah! Chat pribadi adalah PRIVASI. Screenshot tanpa izin bisa merusak kepercayaan dan persahabatan.'
+                },
+                points: 15
+            },
+            {
+                category: '🎯 Challenge Viral',
+                icon: '📑',
+                text: 'Challenge viral yang minta data pribadi (nama lengkap, tanggal lahir, dll)',
+                hint: 'Data',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Tepat! Banyak challenge viral adalah jebakan untuk mencuri data pribadimu!',
+                    wrong: 'Salah! Challenge yang minta data pribadi biasanya JEBAKAN untuk phishing/pencurian identitas.'
+                },
+                points: 15
+            },
+            {
+                category: '🏥 Kesehatan',
+                icon: '💊',
+                text: 'Hasil tes kesehatan/medical record dengan data lengkap',
+                hint: 'Privasi medis',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Benar! Data kesehatan adalah privasi. Bisa disalahgunakan untuk diskriminasi asuransi/pekerjaan.',
+                    wrong: 'Salah! Data medis sangat pribadi. Bisa disalahgunakan untuk diskriminasi atau penipuan.'
+                },
+                points: 15
+            },
+            {
+                category: '🌐 Akses Akun',
+                icon: '🔐',
+                text: 'Link "password reset" atau link verifikasi akun',
+                hint: 'Akses penuh akun',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Tepat! Link verifikasi/reset = kunci ke akunmu. Orang bisa ganti password dan ambil alih akun!',
+                    wrong: 'BAHAYA! Link verifikasi/reset TIDAK BOLEH dibagikan. Orang bisa akses dan bajak akunmu!'
+                },
+                points: 15
+            },
+            {
+                category: '👨‍👩‍👧 Keluarga',
+                icon: '🏡',
+                text: 'Info detail tentang rutinitas/pekerjaan orang tua',
+                hint: 'Keamanan keluarga',
+                correct: 'safe',
+                feedback: {
+                    correct: 'Benar! Info rutinitas keluarga bisa dipakai penjahat untuk merencana kejahatan!',
+                    wrong: 'Salah! Detail rutinitas keluarga BERBAHAYA. Penjahat bisa memanfaatkan info ini!'
+                },
+                points: 15
+            }
+        ];
+
+        let currentCards = [];
+        let currentIndex = 0;
+        let score = 0;
+        let correct = 0;
+        let wrong = 0;
+        let streak = 0;
+        let timeLeft = 10;
+        let timerInterval;
+
+        function startGame() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            // Shuffle and prepare cards
+            currentCards = [...contents].sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+            score = 0;
+            correct = 0;
+            wrong = 0;
+            streak = 0;
+            
+            updateStats();
+            loadNextCard();
+        }
+
+        function loadNextCard() {
+            if (currentIndex >= currentCards.length) {
+                endGame();
+                return;
+            }
+
+            const cardStack = document.getElementById('cardStack');
+            cardStack.innerHTML = '';
+
+            // Load current card and next 2 cards for stack effect
+            for (let i = 0; i < Math.min(3, currentCards.length - currentIndex); i++) {
+                const content = currentCards[currentIndex + i];
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.style.zIndex = 10 - i;
+                card.style.transform = `scale(${1 - i * 0.05}) translateY(${i * 15}px)`;
+                card.style.opacity = 1 - i * 0.2;
+                
+                if (i === 0) {
+                    card.innerHTML = `
+                        <div class="card-category">
+                            ${content.category}
+                        </div>
+                        <div class="card-content">
+                            <div class="card-icon">${content.icon}</div>
+                            <div class="card-text">${content.text}</div>
+                            <div class="card-hint">💡 ${content.hint}</div>
+                        </div>
+                        <div class="swipe-indicator swipe-left-indicator">❌</div>
+                        <div class="swipe-indicator swipe-right-indicator">✅</div>
+                    `;
+                } else {
+                    // Preview cards (no content shown)
+                    card.innerHTML = `
+                        <div class="card-category">
+                            ${content.category}
+                        </div>
+                        <div class="card-content">
+                            <div class="card-icon">${content.icon}</div>
+                        </div>
+                    `;
+                }
+                
+                cardStack.appendChild(card);
+            }
+
+            // Start timer
+            timeLeft = 10;
+            updateTimer();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 100);
+        }
+
+        function makeDecision(decision) {
+            clearInterval(timerInterval);
+            
+            const content = currentCards[currentIndex];
+            const isCorrect = decision === content.correct;
+            
+            const card = document.querySelector('.game-card');
+            if (decision === 'safe') {
+                card.classList.add('swipe-left');
+            } else {
+                card.classList.add('swipe-right');
+            }
+            
+            // Update stats
+            if (isCorrect) {
+                correct++;
+                streak++;
+                const bonus = streak >= 3 ? 5 : 0;
+                score += content.points + bonus;
+                
+                showFeedback(true, content.feedback.correct, content.points + bonus);
+            } else {
+                wrong++;
+                streak = 0;
+                const penalty = Math.floor(content.points / 2);
+                score = Math.max(0, score - penalty);
+                
+                showFeedback(false, content.feedback.wrong, -penalty);
+            }
+            
+            updateStats();
+            
+            // Show streak badge
+            if (streak >= 3 && isCorrect) {
+                showStreakBadge();
+            }
+            
+            setTimeout(() => {
+                currentIndex++;
+                loadNextCard();
+            }, 800);
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('correct').textContent = correct;
+            document.getElementById('wrong').textContent = wrong;
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function updateTimer() {
+            timeLeft -= 0.1;
+            const percentage = (timeLeft / 10) * 100;
+            document.getElementById('timerFill').style.width = percentage + '%';
+            document.getElementById('timeLeft').textContent = Math.ceil(timeLeft);
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                // Auto decide as wrong (timeout)
+                wrong++;
+                streak = 0;
+                showFeedback(false, '⏰ Waktu habis! Kamu harus lebih cepat memutuskan.', -5);
+                score = Math.max(0, score - 5);
+                updateStats();
+                
+                setTimeout(() => {
+                    currentIndex++;
+                    loadNextCard();
+                }, 1500);
+            }
+        }
+
+        function showFeedback(isCorrect, message, points) {
+            const modal = document.getElementById('feedbackModal');
+            const icon = document.getElementById('feedbackIcon');
+            const title = document.getElementById('feedbackTitle');
+            const text = document.getElementById('feedbackText');
+            const pointsDiv = document.getElementById('feedbackPoints');
+            
+            icon.textContent = isCorrect ? '✅' : '❌';
+            title.textContent = isCorrect ? 'BENAR!' : 'SALAH!';
+            title.style.color = isCorrect ? '#28a745' : '#dc3545';
+            text.textContent = message;
+            pointsDiv.textContent = points > 0 ? `+${points}` : points;
+            pointsDiv.className = `feedback-points ${points > 0 ? 'positive' : 'negative'}`;
+            
+            modal.classList.add('show');
+            
+            setTimeout(() => {
+                modal.classList.remove('show');
+            }, 2500);
+        }
+
+        function showStreakBadge() {
+            const cardStack = document.getElementById('cardStack');
+            const badge = document.createElement('div');
+            badge.className = 'streak-badge';
+            badge.textContent = `🔥 ${streak}x Streak!`;
+            cardStack.appendChild(badge);
+            
+            setTimeout(() => {
+                badge.remove();
+            }, 3000);
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('endScreen').classList.remove('hidden');
+            
+            const accuracy = Math.round((correct / (correct + wrong)) * 100);
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            document.getElementById('totalCorrect').textContent = correct;
+            document.getElementById('totalWrong').textContent = wrong;
+            
+            let message = '';
+            let emoji = '';
+            
+            if (accuracy >= 90) {
+                emoji = '🏆';
+                message = `${emoji} <strong>MASTER DIGITAL SAFETY!</strong><br><br>
+                    Luar biasa! Kamu sangat paham mana yang aman dan tidak aman untuk dibagikan. 
+                    Impulse control-mu sangat baik! Terus jaga kehati-hatian ini dalam kehidupan digitalmu.`;
+            } else if (accuracy >= 75) {
+                emoji = '🌟';
+                message = `${emoji} <strong>SANGAT BAIK!</strong><br><br>
+                    Hebat! Kamu sudah paham sebagian besar konsep digital safety. 
+                    Terus latih kemampuan berpikir cepat namun tetap hati-hati sebelum posting.`;
+            } else if (accuracy >= 60) {
+                emoji = '👍';
+                message = `${emoji} <strong>CUKUP BAIK</strong><br><br>
+                    Lumayan! Kamu mulai memahami risiko digital, tapi masih perlu lebih berhati-hati. 
+                    Ingat: PIKIRKAN SEBELUM POSTING!`;
+            } else if (accuracy >= 40) {
+                emoji = '⚠️';
+                message = `${emoji} <strong>PERLU BELAJAR LAGI</strong><br><br>
+                    Hati-hati! Keputusan impulsimu masih cukup berisiko. 
+                    Banyak konten berbahaya yang kamu anggap aman. Pelajari lagi tentang digital footprint!`;
+            } else {
+                emoji = '🚨';
+                message = `${emoji} <strong>BAHAYA!</strong><br><br>
+                    Wah, kamu perlu sangat berhati-hati! Banyak keputusan yang berisiko tinggi. 
+                    Jejak digitalmu bisa jadi masalah besar. Pelajari digital safety dengan serius!`;
+            }
+            
+            document.getElementById('finalMessage').innerHTML = message;
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('gameScreen').classList.contains('hidden')) return;
+            
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                makeDecision('safe');
+            } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                makeDecision('share');
+            }
+        });
+    </script>
+</body>
+</html>

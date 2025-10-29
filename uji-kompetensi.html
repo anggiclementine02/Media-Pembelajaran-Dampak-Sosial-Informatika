@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uji Kompetensi - Dampak Sosial Informatika</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #113F67;
+      color: #1c1c1c;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    canvas#stars {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(253, 245, 170, 0.03), transparent 50%);
+    }
+
+    /* === MODERN HEADER === */
+    header {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    header h1 {
+      font-size: 1.8em;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    .home-btn {
+      background: rgba(253, 245, 170, 0.2);
+      color: #ffffff;
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .home-btn:hover {
+      background: rgba(253, 245, 170, 0.3);
+      border-color: rgba(253, 245, 170, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* === FLOATING NAV BUTTONS === */
+    .nav-buttons {
+      position: fixed;
+      bottom: 390px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1000px;
+      z-index: 50;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 500;
+      padding: 14px 30px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn:hover {
+      background: rgba(253, 245, 170, 0.2);
+      border-color: rgba(253, 245, 170, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(253, 245, 170, 0.2);
+    }
+
+    /* === CONTENT SECTION === */
+    .content {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px 100px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(253, 245, 170, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(253, 245, 170, 0.3);
+      padding: 10px 20px;
+      border-radius: 50px;
+      color: #FDF5AA;
+      font-size: 1.2em;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-size: 3em;
+      font-weight: 800;
+      line-height: 1.1;
+      color: #ffffff;
+      margin-bottom: 15px;
+      letter-spacing: -2px;
+    }
+
+    .section-header .gradient-text {
+      background: linear-gradient(135deg, #FDF5AA 0%, #ffffff 50%, #FDF5AA 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .section-header p {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* === QUIZ CONTAINER === */
+    .quiz-container {
+      background: rgba(40, 65, 109, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 30px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      max-width: 900px;
+      width: 100%;
+      animation: fadeInScale 1s ease-out 0.3s both;
+    }
+
+    .quiz-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.08) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .progress-container {
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, #FDF5AA, #f5e878);
+      transition: width 0.5s ease;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .progress::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    .question-counter {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ffffff;
+      font-weight: 500;
+      font-size: 1.1em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .question-container {
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .question {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 25px;
+      line-height: 1.5;
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .question::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 5px;
+      background: linear-gradient(to bottom, #FDF5AA, #f5e878);
+      border-radius: 5px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 30px;
+      color: #ffff;
+    }
+
+    .option {
+      padding: 18px 25px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: rgba(40, 65, 109, 0.8);
+    }
+
+    .option::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(253, 245, 170, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .option:hover::before {
+      left: 100%;
+    }
+
+    .option:hover {
+      border-color: rgba(253, 245, 170, 0.5);
+      background-color: rgba(253, 245, 170, 0.1);
+      transform: translateX(5px);
+    }
+
+    .option.selected {
+      border-color: #FDF5AA;
+      background-color: rgba(253, 245, 170, 0.15);
+      box-shadow: 0 4px 8px rgba(253, 245, 170, 0.2);
+    }
+
+    .option-letter {
+      font-weight: 600;
+      margin-right: 15px;
+      color: #ffff;
+      min-width: 25px;
+      font-size: 1.1em;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 25px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1em;
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:active::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #FDF5AA, #f5e878);
+      color: #113F67;
+      box-shadow: 0 4px 8px rgba(253, 245, 170, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(253, 245, 170, 0.4);
+    }
+
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* === RESULT PAGE === */
+    .result-container {
+      text-align: center;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .result-title {
+      font-size: 2.2em;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .result-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #113F67, #FDF5AA);
+      border-radius: 3px;
+    }
+
+    .result-score {
+      font-size: 3.5em;
+      font-weight: 700;
+      color: #FDF5AA;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .result-message {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 30px;
+      max-width: 80%;
+    }
+
+    /* === FOOTER === */
+    footer {
+      background: rgba(253, 245, 170, 0.95);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 30px;
+      color: #113F67;
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(17, 63, 103, 0.1);
+    }
+
+    footer p {
+      font-weight: 500;
+      font-size: 0.95em;
+    }
+
+    /* === FLOATING PARTICLES === */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(253, 245, 170, 0.8), transparent);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+        transform: translateY(90vh) translateX(20px) scale(1);
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) translateX(100px) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 1024px) {
+      .section-header h2 {
+        font-size: 2.5em;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        padding: 15px 25px;
+        gap: 15px;
+      }
+
+      header h1 {
+        font-size: 1.3em;
+      }
+
+      .content {
+        padding: 30px 20px 80px;
+      }
+
+      .section-header {
+        margin-bottom: 40px;
+      }
+
+      .section-header h2 {
+        font-size: 2em;
+      }
+
+      .section-header p {
+        font-size: 1em;
+      }
+
+      .quiz-container {
+        padding: 30px;
+      }
+
+      .question {
+        font-size: 1.1em;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 0.9em;
+      }
+
+      .nav-buttons {
+        bottom: 20px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        padding: 12px 24px;
+        font-size: 0.9em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section-header h2 {
+        font-size: 1.8em;
+      }
+
+      .section-badge {
+        font-size: 0.8em;
+        padding: 8px 16px;
+      }
+
+      .quiz-container {
+        padding: 25px;
+      }
+
+      .question {
+        font-size: 1em;
+      }
+
+
+      .option {
+        padding: 12px 15px;
+      }
+
+      .btn {
+        padding: 10px 15px;
+        font-size: 0.85em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="overlay"></div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <h1>Uji Kompetensi</h1>
+    <a href="Evaluasi.html" class="home-btn">
+      <i class="fas fa-home"></i> Kembali ke Beranda
+    </a>
+  </header>
+
+  <div class="nav-buttons">
+    <a href="Evaluasi.html" class="nav-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+    <a href="index.html" class="nav-btn">
+      Next <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <section class="content">
+    <div class="section-header">
+      <div class="section-badge">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Uji Kompetensi</span>
+      </div>
+      
+      <h2 class="gradient-text">Tes Pemahaman Materi</h2>
+      <p>Jawablah pertanyaan-pertanyaan di bawah ini untuk menguji pemahamanmu tentang materi Dampak Sosial Informatika</p>
+    </div>
+
+    <div class="quiz-container">
+      <div class="quiz-container" id="quizContainer">
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+          </div>
+        </div>
+        
+        <div class="question-counter" id="questionCounter">Soal 1 dari 20</div>
+        
+        <div class="question-container" id="questionContainer">
+          <div class="question" id="questionText"></div>
+          <div class="options" id="optionsContainer"></div>
+        </div>
+        
+        <div class="navigation">
+          <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()">
+            <i class="fas fa-arrow-left"></i> Sebelumnya
+          </button>
+          <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
+            Lanjut <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="result-container" id="resultContainer">
+        <div class="result-title">Hasil Kuis</div>
+        <div class="result-score" id="scoreDisplay">0/20</div>
+        <div class="result-message" id="resultMessage"></div>
+        <button class="btn btn-primary" onclick="resetQuiz()">
+          <i class="fas fa-redo"></i> Ulangi Kuis
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Media Pembelajaran Informatika | Dibuat oleh Anggi Clementine (237111039)</p>
+  </footer>
+
+  <script>
+    // Data soal
+    const questions = [
+      {
+        question: "Definisi paling tepat dari media sosial adalah…",
+        options: [
+          "Media cetak yang dapat diakses secara daring.",
+          "Media interaktif berbasis internet yang memungkinkan pengguna berkreasi dan berbagi informasi dalam komunitas virtual.",
+          "Situs web yang hanya digunakan untuk berkomunikasi dengan teman lama.",
+          "Platform yang hanya dimiliki oleh pemerintah untuk menyebarkan informasi resmi."
+        ],
+        correctAnswer: 1
+      },
+      {
+        question: "Salah satu karakteristik utama media sosial yang membedakannya dari media tradisional adalah…",
+        options: [
+          "Isinya selalu bersifat faktual dan dapat dipertanggungjawabkan.",
+          "Komunikasi terjadi dari satu sumber ke banyak penerima secara satu arah.",
+          "Pengguna dapat secara aktif menciptakan dan berbagi konten sendiri.",
+          "Memerlukan biaya langganan yang mahal untuk dapat mengaksesnya."
+        ],
+        correctAnswer: 2
+      },
+      {
+        question: "Platform yang termasuk dalam klasifikasi Microblog berdasarkan materi adalah…",
+        options: [
+          "Facebook dan Instagram",
+          "YouTube dan Vimeo",
+          "WordPress dan Blogspot",
+          "Tumblr dan Twitter"
+        ],
+        correctAnswer: 3
+      },
+      {
+        question: "Penggunaan platform media sosial oleh perusahaan untuk memposting lowongan kerja dan berinteraksi dengan calon pelamar merupakan contoh dampak positif media sosial dalam bidang…",
+        options: [
+          "Kedekatan sosial",
+          "Rekrutmen karyawan",
+          "Penegakan hukum",
+          "Pertumbuhan aplikasi baru"
+        ],
+        correctAnswer: 1
+      },
+      {
+        question: "Platform media sosial yang paling efektif untuk Sinta promosikan produk kerajinan tangan berbasis visual adalah…",
+        options: [
+          "Forum seperti Stack Overflow, karena fokus pada diskusi mendalam.",
+          "Video Sharing seperti YouTube, karena dapat menampilkan video proses pembuatan.",
+          "Photo Sharing seperti Instagram, karena berfokus pada konten visual yang menarik.",
+          "Blog seperti WordPress, karena memungkinkan penulisan artikel yang panjang dan detail."
+        ],
+        correctAnswer: 2
+      },
+      {
+        question: "Dampak negatif yang paling mungkin dialami Andi akibat membandingkan dirinya dengan konten mewah teman-temannya di media sosial adalah…",
+        options: [
+          "Kecanduan bermain game sosial.",
+          "Pengaruh pada kesehatan emosional yang menurun.",
+          "Risiko pencurian data pribadi.",
+          "Terpapar berita bohong (hoax)."
+        ],
+        correctAnswer: 1
+      },
+      {
+        question: "Motivasi utama LSM menggunakan media sosial untuk menggalang dana dan dukungan masyarakat terhadap isu lingkungan adalah…",
+        options: [
+          "Membangun citra diri agar terlihat baik.",
+          "Berinteraksi sosial dengan teman-teman lama.",
+          "Memberikan dukungan pada isu yang dianggap penting.",
+          "Berbagi informasi seputar hiburan semata."
+        ],
+        correctAnswer: 2
+      },
+      {
+        question: "Berita bohong atau hoax adalah…",
+        options: [
+          "Opini seseorang yang tidak kita sukai.",
+          "Informasi yang secara fakta tidak benar dan sengaja dibuat untuk menyesatkan.",
+          "Berita yang belum diverifikasi kebenarannya.",
+          "Satu sisi dari sebuah peristiwa yang dilaporkan."
+        ],
+        correctAnswer: 1
+      },
+      {
+        question: "Langkah pertama yang harus dilakukan saat menerima informasi mencurigakan di media sosial adalah…",
+        options: [
+          "Langsung membagikannya ke grup keluarga agar waspada.",
+          "Mengembangkan pemikiran kritis dan menahan diri untuk tidak langsung percaya.",
+          "Mencari akun pembuat berita untuk menghakiminya.",
+          "Menghapus pesan tersebut dan berpura-pura tidak melihatnya."
+        ],
+        correctAnswer: 1
+      },
+      {
+        question: "Situs dengan alamat domain www.pemerintah-pusat.go.id kemungkinan besar merupakan…",
+        options: [
+          "Situs pemerintah yang kredibel.",
+          "Situs pendidikan resmi.",
+          "Situs komersial milik swasta.",
+          "Situs yang dibuat menggunakan CMS gratis."
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Tindakan paling tepat saat menerima pesan berantai tentang \"garam menyembuhkan COVID-19\" disertai foto dokter tak dikenal adalah…",
+        options: [
+          "Langsung membeli banyak garam dan mencobanya.",
+          "Meneruskan pesan ke grup lain dengan tambahan \"semoga bermanfaat\".",
+          "Mengecek asal foto menggunakan Google Image Search dan membandingkan informasi dengan situs kesehatan resmi (seperti Kemenkes atau WHO).",
+          "Mempercayainya karena dikirim oleh kerabat dekat."
+        ],
+        correctAnswer: 2
+      },
+      {
+        question: "\"Menggunakan akal sehat\" merupakan langkah penting dalam mengidentifikasi hoax karena…",
+        options: [
+          "Karena semua berita sensasional pasti bohong.",
+          "Karena insting kita selalu lebih akurat daripada fakta.",
+          "Karena berita yang terlalu fantastis, tidak masuk akal, atau sengaja memancing emosi kuat seringkali merupakan ciri-ciri hoax.",
+          "Karena akal sehat bisa menggantikan fungsi cek sumber dan cek fakta."
+        ],
+        correctAnswer: 2
+      },
+      {
+        question: "Video viral bencana alam yang ternyata rekaman lama dari negara lain menunjukkan kegagalan dalam langkah…",
+        options: [
+          "Memeriksa sumber informasi.",
+          "Mengembangkan pemikiran kritis.",
+          "Melakukan check and recheck dengan media lain.",
+          "Mengecek validitas gambar atau video."
+        ],
+        correctAnswer: 3
+      },
+      {
+        question: "Dampak yang mungkin terjadi jika seseorang sengaja menyebarkan informasi palsu yang sudah diketahui kebenarannya adalah…",
+        options: [
+          "Kredibilitas kita di mata orang lain akan menurun dan berpotensi melanggar hukum.",
+          "Akun media sosial kita akan otomatis mendapat lebih banyak pengikut.",
+          "Tidak ada dampak apa-apa karena itu hanya terjadi di dunia maya.",
+          "Kita akan dihargai karena telah memberikan peringatan dulu kepada orang lain."
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Cyberbullying adalah…",
+        options: [
+          "Perdebatan yang terjadi di kolom komentar media sosial.",
+          "Perundungan yang dilakukan secara tatap muka lalu didokumentasikan di media sosial.",
+          "Perundungan di dunia maya yang menggunakan media digital untuk mengintimidasi atau menyakiti orang lain.",
+          "Berbagi meme lucu tentang teman di grup chat."
+        ],
+        correctAnswer: 2
+      },
+      {
+        question: "Contoh tindakan yang bukan termasuk jenis cyberbullying adalah…",
+        options: [
+          "Memberikan komentar positif dan dukungan di postingan teman.",
+          "Menyebar rumor atau rahasia tentang seseorang.",
+          "Membuat profil palsu untuk mengaku sebagai orang lain.",
+          "Mengirimkan pesan ancaman kepada korban."
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Dampak yang mungkin dialami oleh pelaku cyberbullying adalah…",
+        options: [
+          "Meningkatnya rasa percaya diri dan popularitas.",
+          "Depresi, kecemasan, dan penurunan prestasi akademik.",
+          "Potensi mendapat masalah perilaku, masalah hukum, dan kesulitan bersosialisasi.",
+          "Tidak ada dampak, karena mereka merasa kuat dan tidak terkena akibatnya."
+        ],
+        correctAnswer: 2
+      },
+      {
+        question: "Tindakan paling bertanggung jawab sebagai anggota grup kelas yang menyaksikan pelecehan terhadap teman melalui media sosial adalah…",
+        options: [
+          "Ikut tertawa agar tidak dikucilkan dari grup.",
+          "Diam saja dan mengabaikan obrolan tersebut.",
+          "Mengirim pesan pribadi kepada korban untuk menasihati agar mengganti fotonya.",
+          "Menunjukkan dukungan kepada korban (misal dengan pesan pribadi) dan melaporkan kejadian kepada guru atau orang dewasa yang dipercaya."
+        ],
+        correctAnswer: 3
+      },
+      {
+        question: "Langkah paling tidak tepat yang sebaiknya tidak dilakukan Rina saat menerima pesan ancaman dari akun anonim adalah…",
+        options: [
+          "Membalas pesan tersebut dengan ancaman yang lebih keras.",
+          "Menyimpan bukti berupa tangkapan layar (screenshot) pesan-pesan tersebut.",
+          "Memblokir akun anonim tersebut.",
+          "Menceritakan kejadian tersebut kepada orang tuanya dan meminta bantuan."
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Pernyataan \"Saya sudah mengatur privasi akun media sosial saya, hanya teman yang bisa melihat postingan saya\" merupakan contoh upaya…",
+        options: [
+          "Penanganan cyberbullying setelah menjadi korban.",
+          "Pencegahan cyberbullying dengan melindungi informasi pribadi.",
+          "Melaporkan pelaku cyberbullying ke platform.",
+          "Menunjukkan dukungan kepada korban cyberbullying."
+        ],
+        correctAnswer: 1
+      }
+    ];
+
+    // Variabel global
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+    let quizCompleted = false;
+
+    // Fungsi untuk membuat partikel animasi
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 15;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 6 + 3;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 15}s`;
+        particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Fungsi untuk memulai kuis
+    function initQuiz() {
+      displayQuestion();
+      updateProgressBar();
+      updateNavigationButtons();
+      createParticles();
+    }
+
+    // Fungsi untuk menampilkan soal
+    function displayQuestion() {
+      const question = questions[currentQuestion];
+      document.getElementById('questionText').textContent = question.question;
+      document.getElementById('questionCounter').textContent = `Soal ${currentQuestion + 1} dari ${questions.length}`;
+      
+      const optionsContainer = document.getElementById('optionsContainer');
+      optionsContainer.innerHTML = '';
+      
+      question.options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.className = 'option';
+        if (userAnswers[currentQuestion] === index) {
+          optionElement.classList.add('selected');
+        }
+        
+        const optionLetter = document.createElement('span');
+        optionLetter.className = 'option-letter';
+        optionLetter.textContent = String.fromCharCode(65 + index) + '.';
+        
+        const optionText = document.createElement('span');
+        optionText.textContent = option;
+        
+        optionElement.appendChild(optionLetter);
+        optionElement.appendChild(optionText);
+        
+        optionElement.addEventListener('click', () => selectOption(index));
+        
+        optionsContainer.appendChild(optionElement);
+      });
+    }
+
+    // Fungsi untuk memilih opsi
+    function selectOption(index) {
+      userAnswers[currentQuestion] = index;
+      
+      // Update UI
+      const options = document.querySelectorAll('.option');
+      options.forEach((option, i) => {
+        if (i === index) {
+          option.classList.add('selected');
+        } else {
+          option.classList.remove('selected');
+        }
+      });
+      
+      // Enable next button
+      document.getElementById('nextBtn').disabled = false;
+    }
+
+    // Fungsi untuk navigasi ke soal berikutnya
+    function nextQuestion() {
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        displayQuestion();
+        updateProgressBar();
+        updateNavigationButtons();
+      } else {
+        showResult();
+      }
+    }
+
+    // Fungsi untuk navigasi ke soal sebelumnya
+    function previousQuestion() {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        displayQuestion();
+        updateProgressBar();
+        updateNavigationButtons();
+      }
+    }
+
+    // Fungsi untuk memperbarui progress bar
+    function updateProgressBar() {
+      const progress = ((currentQuestion + 1) / questions.length) * 100;
+      document.getElementById('progressBar').style.width = `${progress}%`;
+    }
+
+    // Fungsi untuk memperbarui tombol navigasi
+    function updateNavigationButtons() {
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      
+      prevBtn.disabled = currentQuestion === 0;
+      
+      if (currentQuestion === questions.length - 1) {
+        nextBtn.innerHTML = 'Selesai <i class="fas fa-check"></i>';
+      } else {
+        nextBtn.innerHTML = 'Lanjut <i class="fas fa-arrow-right"></i>';
+      }
+      
+      // Disable next button if no answer is selected
+      nextBtn.disabled = userAnswers[currentQuestion] === null;
+    }
+
+    // Fungsi untuk menampilkan hasil
+    function showResult() {
+      quizCompleted = true;
+      
+      // Calculate score
+      let score = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (userAnswers[i] === questions[i].correctAnswer) {
+          score++;
+        }
+      }
+      
+      // Hide quiz container and show result
+      document.getElementById('quizContainer').style.display = 'none';
+      document.getElementById('resultContainer').style.display = 'flex';
+      
+      // Display score
+      document.getElementById('scoreDisplay').textContent = `${score}/${questions.length}`;
+      
+      // Display message based on score
+      let message = '';
+      const percentage = (score / questions.length) * 100;
+      
+      if (percentage >= 90) {
+        message = 'Luar biasa! Anda telah menguasai materi dengan sangat baik.';
+      } else if (percentage >= 75) {
+        message = 'Bagus! Anda telah memahami sebagian besar materi.';
+      } else if (percentage >= 60) {
+        message = 'Cukup baik. Ada beberapa materi yang perlu Anda pelajari kembali.';
+      } else {
+        message = 'Perlu belajar lebih giat lagi. Jangan menyerah!';
+      }
+      
+      document.getElementById('resultMessage').textContent = message;
+    }
+
+    // Fungsi untuk mereset kuis
+    function resetQuiz() {
+      currentQuestion = 0;
+      userAnswers = new Array(questions.length).fill(null);
+      quizCompleted = false;
+      
+      // Show quiz container and hide result
+      document.getElementById('quizContainer').style.display = 'flex';
+      document.getElementById('resultContainer').style.display = 'none';
+      
+      // Reinitialize quiz
+      initQuiz();
+    }
+
+    // Enhanced starfield animation
+    (function () {
+      const canvas = document.getElementById('stars');
+      const ctx = canvas.getContext('2d');
+
+      const STAR_COUNT = Math.floor((window.innerWidth * window.innerHeight) / 2000);
+      const MAX_RADIUS = 2;
+      const MIN_RADIUS = 0.4;
+      const TWINKLE_SPEED = 0.02;
+      const SHOOTING_STAR_CHANCE = 0.001;
+      const SHOOTING_STAR_SPEED = 15;
+
+      let stars = [];
+      let shootingStars = [];
+      let w = 0, h = 0, t = 0;
+
+      function rand(min, max) { return Math.random() * (max - min) + min; }
+
+      function makeStar() {
+        return {
+          x: Math.random(),
+          y: Math.random(),
+          r: rand(MIN_RADIUS, MAX_RADIUS),
+          baseAlpha: rand(0.4, 1.0),
+          twinklePhase: Math.random() * Math.PI * 2,
+          twinkleSpeed: rand(TWINKLE_SPEED * 0.5, TWINKLE_SPEED * 1.5)
+        };
+      }
+
+      function makeShootingStar() {
+        const angle = rand(0, Math.PI * 0.5);
+        return {
+          x: rand(0, 0.5),
+          y: rand(0, 0.5),
+          vx: Math.cos(angle) * SHOOTING_STAR_SPEED * 0.001,
+          vy: Math.sin(angle) * SHOOTING_STAR_SPEED * 0.001,
+          length: rand(0.05, 0.15),
+          alpha: 1.0
+        };
+      }
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+
+      function init() {
+        resize();
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          stars.push(makeStar());
+        }
+      }
+
+      function animate() {
+        t += 0.01;
+        ctx.fillStyle = 'rgba(17, 63, 103, 0.1)';
+        ctx.fillRect(0, 0, w, h);
+
+        stars.forEach(star => {
+          const twinkle = Math.sin(star.twinklePhase + t * star.twinkleSpeed) * 0.5 + 0.5;
+          const alpha = star.baseAlpha * twinkle;
+          
+          ctx.beginPath();
+          ctx.arc(star.x * w, star.y * h, star.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.fill();
+        });
+
+        if (Math.random() < SHOOTING_STAR_CHANCE) {
+          shootingStars.push(makeShootingStar());
+        }
+
+        shootingStars = shootingStars.filter(star => {
+          star.x += star.vx;
+          star.y += star.vy;
+          star.alpha -= 0.01;
+
+          if (star.alpha <= 0) return false;
+
+          const gradient = ctx.createLinearGradient(
+            star.x * w, star.y * h,
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${star.alpha})`);
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(star.x * w, star.y * h);
+          ctx.lineTo(
+            (star.x - star.vx * star.length * 100) * w,
+            (star.y - star.vy * star.length * 100) * h
+          );
+          ctx.stroke();
+
+          return true;
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', init);
+      init();
+      animate();
+    })();
+
+    // Initialize quiz when page loads
+    window.onload = initQuiz;
+  </script>
+</body>
+</html>
